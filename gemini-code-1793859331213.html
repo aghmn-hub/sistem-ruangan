@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Pemesanan Ruangan</title>
+  <!-- Load Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Load Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Load SheetJS untuk Export Excel -->
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <style>
+    .hidden { display: none !important; }
+    /* Transisi sederhana */
+    .fade-in { animation: fadeIn 0.3s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans p-4 md:p-8 min-h-screen">
+
+  <div class="max-w-5xl mx-auto space-y-8">
+    
+    <!-- Header -->
+    <div class="text-center space-y-2 relative">
+      <h1 class="text-3xl font-bold text-white tracking-tight">Sistem Pemesanan Ruangan</h1>
+      <p class="text-slate-400">Kantor Diponegoro & Cipto</p>
+      <button id="btn-refresh" class="absolute right-0 top-0 mt-2 bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-full transition-colors flex items-center gap-2 text-sm hidden">
+        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+    <!-- Navigasi Tab -->
+    <div class="flex justify-center flex-wrap gap-2">
+      <div class="inline-flex bg-slate-800 rounded-full p-1 border border-slate-700 shadow-xl flex-wrap justify-center">
+        <button onclick="switchTab('pemohon')" id="nav-pemohon" class="tab-btn active bg-emerald-600 text-white shadow-md flex items-center space-x-2 px-6 py-3 rounded-full font-medium transition-all duration-300">
+          <i data-lucide="user-cog" class="w-5 h-5"></i>
+          <span class="hidden sm:inline">Tim Kerja (Pemohon)</span>
+          <span class="sm:hidden">Pemohon</span>
+        </button>
+        <button onclick="switchTab('bmn')" id="nav-bmn" class="tab-btn text-slate-300 hover:text-white hover:bg-slate-700/50 flex items-center space-x-2 px-6 py-3 rounded-full font-medium transition-all duration-300">
+          <i data-lucide="user-round-check" class="w-5 h-5"></i>
+          <span class="hidden sm:inline">Tim BMN</span>
+          <span class="sm:hidden">BMN</span>
+          <span id="badge-pending" class="hidden flex items-center justify-center bg-rose-500 text-white text-xs font-bold w-5 h-5 rounded-full ml-2 shadow-sm">0</span>
+        </button>
+        <button onclick="switchTab('rekap')" id="nav-rekap" class="tab-btn text-slate-300 hover:text-white hover:bg-slate-700/50 flex items-center space-x-2 px-6 py-3 rounded-full font-medium transition-all duration-300">
+          <i data-lucide="layout-grid" class="w-5 h-5"></i>
+          <span>Rekap & Jadwal</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="offline-warning" class="bg-amber-500/20 border border-amber-500/50 text-amber-200 text-sm p-3 rounded-lg flex items-center justify-center gap-2">
+      <i data-lucide="info" class="w-4 h-4"></i> Mode Offline: Data hanya tersimpan di browser perangkat ini.
+    </div>
+
+    <!-- VIEW 1: PEMOHON -->
+    <div id="view-pemohon" class="view-section fade-in space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 text-slate-800">
+          <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl"><i data-lucide="check-circle-2"></i></div>
+          <div><div class="text-sm text-slate-500 font-medium">Terfasilitasi</div><div id="stat-terfasilitasi" class="text-2xl font-bold">0</div></div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 text-slate-800">
+          <div class="p-3 bg-amber-100 text-amber-600 rounded-xl"><i data-lucide="clock"></i></div>
+          <div><div class="text-sm text-slate-500 font-medium">Menunggu Persetujuan</div><div id="stat-menunggu" class="text-2xl font-bold">0</div></div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4 text-slate-800">
+          <div class="p-3 bg-blue-100 text-blue-600 rounded-xl"><i data-lucide="activity"></i></div>
+          <div><div class="text-sm text-slate-500 font-medium">Terpakai Hari Ini</div><div id="stat-hari-ini" class="text-2xl font-bold">0</div></div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-xl overflow-hidden text-slate-800 border border-slate-200">
+          <div class="bg-emerald-600 px-6 py-4 border-b border-emerald-700">
+            <h2 class="text-xl font-semibold text-white flex items-center gap-2"><i data-lucide="calendar-days"></i> Formulir Pemesanan Ruangan</h2>
+          </div>
+          <form id="form-pemesanan" class="p-6 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2 md:col-span-2">
+                <label class="text-sm font-semibold text-slate-700">Nama Kegiatan</label>
+                <input required type="text" id="input-kegiatan" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Contoh: Rapat Evaluasi Kinerja">
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-slate-700">Tim Kerja</label>
+                <select required id="input-tim" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none bg-white"></select>
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-slate-700">Nama Pemesan / PJ</label>
+                <input required type="text" id="input-pemesan" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none">
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-slate-700">Jumlah Peserta</label>
+                <input type="number" id="input-peserta" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none">
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-slate-700">Pilihan Kantor</label>
+                <select id="input-kantor" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none bg-white">
+                  <option value="Diponegoro">Kantor Diponegoro</option>
+                  <option value="Cipto">Kantor Cipto</option>
+                </select>
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-slate-700">Pilihan Ruangan</label>
+                <select required id="input-ruangan" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none bg-white"></select>
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-slate-700">Tanggal Mulai</label>
+                <input required type="date" id="input-tgl-mulai" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none">
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-slate-700">Tanggal Selesai</label>
+                <input required type="date" id="input-tgl-selesai" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none">
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-slate-700">Waktu Mulai</label>
+                <input required type="time" id="input-waktu-mulai" value="08:00" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none">
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-semibold text-slate-700">Waktu Selesai</label>
+                <input required type="time" id="input-waktu-selesai" value="10:00" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none">
+              </div>
+            </div>
+            <div class="pt-4 border-t border-slate-100 flex justify-end">
+              <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-6 rounded-lg shadow-md transition-colors flex items-center gap-2">
+                <i data-lucide="check-circle-2" class="w-5 h-5"></i> Ajukan Pemesanan
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="lg:col-span-1 bg-white rounded-2xl shadow-xl overflow-hidden text-slate-800 border border-slate-200 flex flex-col">
+          <div class="bg-slate-800 px-5 py-4 border-b border-slate-700">
+            <h3 class="text-lg font-semibold text-white flex items-center gap-2"><i data-lucide="info" class="w-5 h-5"></i> Status Ruangan</h3>
+            <p id="status-ruangan-label" class="text-xs text-slate-300 mt-1"></p>
+          </div>
+          <div id="list-status-ruangan" class="p-0 flex-1 overflow-y-auto max-h-[600px] divide-y divide-slate-100">
+            <!-- Render via JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: BMN -->
+    <div id="view-bmn" class="view-section hidden fade-in space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm overflow-hidden text-slate-800 border border-slate-200">
+        <div class="bg-rose-50 px-6 py-4 border-b border-rose-100 flex justify-between items-center">
+          <h3 class="font-semibold text-rose-900 flex items-center gap-2">
+            Menunggu Persetujuan <span id="bmn-pending-count" class="bg-rose-500 text-white text-xs px-2 py-0.5 rounded-full">0</span>
+          </h3>
+        </div>
+        <div id="bmn-pending-list" class="divide-y divide-slate-100">
+           <!-- Render via JS -->
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden text-slate-800 border border-slate-200 opacity-90">
+        <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+          <h3 class="font-semibold text-slate-700">Riwayat Keputusan Terakhir</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <tbody id="bmn-history-list" class="divide-y divide-slate-100">
+              <!-- Render via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: REKAP -->
+    <div id="view-rekap" class="view-section hidden fade-in space-y-8">
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden text-slate-800 border border-slate-200">
+        <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <h2 class="text-lg font-semibold flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-5 h-5 text-emerald-600"></i> Export Jadwal</h2>
+          <div class="flex flex-wrap items-center gap-3">
+            <input type="date" id="rekap-date" class="px-3 py-2 text-sm rounded-lg border border-slate-300 outline-none">
+            <button id="btn-export" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors shadow-sm">
+              <i data-lucide="download" class="w-4 h-4"></i> Unduh Rekap Excel
+            </button>
+          </div>
+        </div>
+        <div class="p-6 text-center text-slate-500">
+           Pilih tanggal dan klik "Unduh Rekap Excel" untuk menghasilkan rekapitulasi data format XLSX.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modal Password BMN -->
+  <div id="modal-password" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden fade-in">
+      <div class="bg-slate-800 px-6 py-4 flex justify-between items-center border-b border-slate-700">
+        <h3 class="text-white font-semibold flex items-center gap-2"><i data-lucide="lock" class="w-5 h-5 text-emerald-500"></i> Autentikasi Tim BMN</h3>
+        <button onclick="closePasswordModal()" class="text-slate-400 hover:text-white"><i data-lucide="x-circle" class="w-5 h-5"></i></button>
+      </div>
+      <form id="form-password" class="p-6 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Kata Sandi</label>
+          <input type="password" id="input-password" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-slate-800" placeholder="••••••••">
+          <p id="password-error" class="hidden text-rose-500 text-sm mt-2 font-medium">Kata sandi salah!</p>
+        </div>
+        <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100">
+          <button type="button" onclick="closePasswordModal()" class="px-5 py-2.5 text-slate-600 hover:bg-slate-100 rounded-lg font-medium">Batal</button>
+          <button type="submit" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium shadow-sm flex items-center gap-2">
+            <i data-lucide="check-circle-2" class="w-5 h-5"></i> Masuk
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // --- KONFIGURASI ---
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/a/macros/dikbud.belajar.id/s/AKfycbwbQVWcwspFQnGzwhqdE3PuPMVw4KfSwcJOlKIH9fLoQguWoJk5ucVhg40WlNn8dj1mUg/exec'; // Isi dengan URL Web App Apps Script jika ada
+    
+    const KANTOR_DATA = {
+      Diponegoro: [
+        "Bale Mayapada (20 orang)", "Bale Perceka (50 orang)", "Bale Wiwaha (12 orang)",
+        "Bale Winaya (50 orang)", "Bale Sawala (50 orang)", "Bale Atikan (45 orang)",
+        "Bale Rucita (100 org tanpa meja / 70 org dgn meja)", "Rempug Jukung (250 org tanpa meja / 120 org dgn meja)"
+      ],
+      Cipto: [
+        "Calakan 1 (30 orang)", "Calakan 2 (42 orang)", "Calakan 3 (36 orang)",
+        "Calakan 4 (25 orang)", "Sabilulungan (35-45 orang)"
+      ]
+    };
+
+    const TIM_LIST = [
+      "Kepala Balai", "Kepala Bagian Umum", "Satuan Pengawasan Intern",
+      "Perencanaan", "Keuangan", "Talpeg PSDM", "Kepustakaan",
+      "Humas, Publikasi dan Keprotokolan", "Kesekretariatan Pimpinan",
+      "Barang Milik Negara", "Persuratan, Kearsipan dan Dokumentasi",
+      "Kerumahtanggaan", "Tim 1", "Tim 2", "Tim 3", "Tim 4",
+      "Kelompok Fungsional", "SEAQIS", "SEAMEO CECCEP", "Front Desk"
+    ];
+
+    let bookings = [];
+
+    // --- INISIALISASI ---
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      initDateInputs();
+      initSelectOptions();
+      loadData();
+      
+      // Event Listeners
+      document.getElementById('input-kantor').addEventListener('change', updateRuanganSelect);
+      document.getElementById('input-tgl-mulai').addEventListener('change', renderStatusRuangan);
+      document.getElementById('form-pemesanan').addEventListener('submit', handlePemesanan);
+      document.getElementById('form-password').addEventListener('submit', handleLoginBMN);
+      document.getElementById('btn-export').addEventListener('click', exportToExcel);
+    });
+
+    function initDateInputs() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('input-tgl-mulai').value = today;
+      document.getElementById('input-tgl-selesai').value = today;
+      document.getElementById('rekap-date').value = today;
+    }
+
+    function initSelectOptions() {
+      const selectTim = document.getElementById('input-tim');
+      TIM_LIST.forEach(tim => { selectTim.innerHTML += `<option value="${tim}">${tim}</option>`; });
+      updateRuanganSelect();
+    }
+
+    function updateRuanganSelect() {
+      const kantor = document.getElementById('input-kantor').value;
+      const selectRuangan = document.getElementById('input-ruangan');
+      selectRuangan.innerHTML = '';
+      KANTOR_DATA[kantor].forEach(ruang => { selectRuangan.innerHTML += `<option value="${ruang}">${ruang}</option>`; });
+      renderStatusRuangan();
+    }
+
+    // --- DATA MANAGEMENT ---
+    async function loadData() {
+      const saved = localStorage.getItem('roomBookings');
+      if (saved) bookings = JSON.parse(saved);
+      
+      if (GOOGLE_SCRIPT_URL) {
+        document.getElementById('offline-warning').classList.add('hidden');
+        document.getElementById('btn-refresh').classList.remove('hidden');
+        try {
+          const res = await fetch(GOOGLE_SCRIPT_URL);
+          const data = await res.json();
+          bookings = data.filter(d => d.id).map(d => ({...d, id: Number(d.id)}));
+          saveLocal();
+        } catch(e) { console.error(e); }
+      }
+      refreshUI();
+    }
+
+    function saveLocal() {
+      localStorage.setItem('roomBookings', JSON.stringify(bookings));
+    }
+
+    async function handlePemesanan(e) {
+      e.preventDefault();
+      const newBooking = {
+        id: Date.now(),
+        kegiatan: document.getElementById('input-kegiatan').value,
+        tim: document.getElementById('input-tim').value,
+        pemesan: document.getElementById('input-pemesan').value,
+        kantor: document.getElementById('input-kantor').value,
+        ruangan: document.getElementById('input-ruangan').value,
+        tanggalMulai: document.getElementById('input-tgl-mulai').value,
+        tanggalSelesai: document.getElementById('input-tgl-selesai').value,
+        waktuMulai: document.getElementById('input-waktu-mulai').value,
+        waktuSelesai: document.getElementById('input-waktu-selesai').value,
+        jumlahPeserta: document.getElementById('input-peserta').value,
+        status: 'Menunggu'
+      };
+
+      bookings.unshift(newBooking);
+      saveLocal();
+      refreshUI();
+      
+      if(GOOGLE_SCRIPT_URL) {
+        fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "create", data: newBooking }) });
+      }
+
+      e.target.reset();
+      initDateInputs();
+      updateRuanganSelect();
+      alert("Pemesanan diajukan! Menunggu persetujuan BMN.");
+    }
+
+    function ubahStatus(id, newStatus) {
+      bookings = bookings.map(b => b.id === id ? { ...b, status: newStatus } : b);
+      saveLocal();
+      refreshUI();
+      if(GOOGLE_SCRIPT_URL) {
+        fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "updateStatus", data: { id, status: newStatus } }) });
+      }
+    }
+
+    // --- UI RENDERERS ---
+    function refreshUI() {
+      // Stats
+      const terfasilitasi = bookings.filter(b => b.status === 'Disetujui').length;
+      const menunggu = bookings.filter(b => b.status === 'Menunggu').length;
+      const today = new Date().toISOString().split('T')[0];
+      const hariIni = bookings.filter(b => b.status === 'Disetujui' && b.tanggalMulai <= today && b.tanggalSelesai >= today).length;
+
+      document.getElementById('stat-terfasilitasi').innerText = terfasilitasi;
+      document.getElementById('stat-menunggu').innerText = menunggu;
+      document.getElementById('stat-hari-ini').innerText = hariIni;
+      
+      // Badge BMN
+      const badge = document.getElementById('badge-pending');
+      badge.innerText = menunggu;
+      if (menunggu > 0) badge.classList.remove('hidden');
+      else badge.classList.add('hidden');
+
+      renderStatusRuangan();
+      renderBMN();
+      lucide.createIcons();
+    }
+
+    function renderStatusRuangan() {
+      const kantor = document.getElementById('input-kantor').value;
+      const tgl = document.getElementById('input-tgl-mulai').value;
+      document.getElementById('status-ruangan-label').innerText = `Kantor ${kantor} • ${tgl}`;
+      
+      const listContainer = document.getElementById('list-status-ruangan');
+      listContainer.innerHTML = '';
+
+      KANTOR_DATA[kantor].forEach(ruang => {
+        const isBooked = bookings.filter(b => b.status === 'Disetujui' && b.ruangan === ruang && b.tanggalMulai <= tgl && b.tanggalSelesai >= tgl);
+        
+        let html = `<div class="p-4 hover:bg-slate-50 transition-colors">
+                      <div class="font-semibold text-sm text-slate-700 mb-2">${ruang.split(' (')[0]}</div>`;
+        
+        if (isBooked.length > 0) {
+          html += `<div class="space-y-2">`;
+          isBooked.forEach(rb => {
+            html += `<div class="bg-rose-50 border border-rose-100 rounded-lg p-2 text-xs text-rose-700 font-bold">
+                       Terisi (${rb.waktuMulai} - ${rb.waktuSelesai})<br><span class="font-normal text-slate-600">${rb.kegiatan}</span>
+                     </div>`;
+          });
+          html += `</div>`;
+        } else {
+          html += `<div class="bg-emerald-50 border border-emerald-100 rounded-lg p-2 text-xs text-emerald-700 font-semibold"> Kosong (Tersedia)</div>`;
+        }
+        html += `</div>`;
+        listContainer.innerHTML += html;
+      });
+    }
+
+    function renderBMN() {
+      const pendingList = document.getElementById('bmn-pending-list');
+      const historyList = document.getElementById('bmn-history-list');
+      const pendingData = bookings.filter(b => b.status === 'Menunggu');
+      const historyData = [...bookings].filter(b => b.status !== 'Menunggu').sort((a,b) => b.id - a.id).slice(0, 10);
+      
+      document.getElementById('bmn-pending-count').innerText = pendingData.length;
+
+      // Render Pending
+      pendingList.innerHTML = pendingData.length === 0 ? `<div class="p-8 text-center text-slate-500">Tidak ada pemesanan yang menunggu.</div>` : '';
+      pendingData.forEach(b => {
+        pendingList.innerHTML += `
+          <div class="p-6 flex flex-col md:flex-row justify-between gap-6 hover:bg-slate-50">
+            <div>
+              <div class="font-bold text-lg text-slate-800">${b.kegiatan}</div>
+              <div class="text-sm text-slate-500">${b.tim} - ${b.pemesan} (${b.jumlahPeserta || 0} Org)</div>
+              <div class="text-sm text-slate-700 mt-2 font-medium">${b.kantor} - ${b.ruangan}</div>
+              <div class="text-sm text-slate-600">${b.tanggalMulai} | ${b.waktuMulai} - ${b.waktuSelesai} WIB</div>
+            </div>
+            <div class="flex gap-3">
+              <button onclick="ubahStatus(${b.id}, 'Disetujui')" class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-lg font-semibold hover:bg-emerald-600 hover:text-white transition-all h-fit">Setujui</button>
+              <button onclick="ubahStatus(${b.id}, 'Ditolak')" class="bg-rose-100 text-rose-700 px-4 py-2 rounded-lg font-semibold hover:bg-rose-600 hover:text-white transition-all h-fit">Tolak</button>
+            </div>
+          </div>`;
+      });
+
+      // Render History
+      historyList.innerHTML = historyData.length === 0 ? `<tr><td class="p-6 text-center text-slate-500">Belum ada riwayat.</td></tr>` : '';
+      historyData.forEach(b => {
+        const badgeColor = b.status === 'Disetujui' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700';
+        historyList.innerHTML += `
+          <tr>
+            <td class="p-4">
+              <div class="font-medium text-slate-800">${b.kegiatan}</div>
+              <div class="text-xs text-slate-500">${b.tim} • ${b.pemesan}</div>
+            </td>
+            <td class="p-4 text-slate-600">${b.tanggalMulai} | ${b.ruangan}</td>
+            <td class="p-4 text-right"><span class="inline-flex px-2.5 py-1 rounded-md text-xs font-semibold ${badgeColor}">${b.status}</span></td>
+          </tr>`;
+      });
+    }
+
+    // --- NAVIGATION & MODALS ---
+    function switchTab(tabId) {
+      if(tabId === 'bmn') {
+        document.getElementById('modal-password').classList.remove('hidden');
+        document.getElementById('input-password').value = '';
+        document.getElementById('password-error').classList.add('hidden');
+        return;
+      }
+      activateTabUI(tabId);
+    }
+
+    function activateTabUI(tabId) {
+      // Sembunyikan semua konten
+      document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`view-${tabId}`).classList.remove('hidden');
+      
+      // Reset styling tombol
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-emerald-600', 'text-white', 'shadow-md');
+        btn.classList.add('text-slate-300');
+      });
+      
+      // Tambah styling aktif
+      const activeBtn = document.getElementById(`nav-${tabId}`);
+      activeBtn.classList.add('bg-emerald-600', 'text-white', 'shadow-md');
+      activeBtn.classList.remove('text-slate-300');
+    }
+
+    function closePasswordModal() {
+      document.getElementById('modal-password').classList.add('hidden');
+    }
+
+    function handleLoginBMN(e) {
+      e.preventDefault();
+      const pw = document.getElementById('input-password').value;
+      if (pw === 'AdminBMN26') {
+        closePasswordModal();
+        activateTabUI('bmn');
+      } else {
+        document.getElementById('password-error').classList.remove('hidden');
+      }
+    }
+
+    // --- EXPORT TO EXCEL ---
+    function exportToExcel() {
+      const year = new Date().getFullYear();
+      const month = new Date().getMonth() + 1;
+      
+      // Format Export (Menyesuaikan dengan contoh React SheetJS)
+      const dataToExport = bookings.filter(b => b.status === 'Disetujui').map(b => ({
+        "Nama Kegiatan": b.kegiatan,
+        "Tim": b.tim,
+        "Pemesan": b.pemesan,
+        "Kantor": b.kantor,
+        "Ruangan": b.ruangan,
+        "Tgl Mulai": b.tanggalMulai,
+        "Tgl Selesai": b.tanggalSelesai,
+        "Waktu": `${b.waktuMulai} - ${b.waktuSelesai}`,
+        "Peserta": b.jumlahPeserta
+      }));
+
+      if(dataToExport.length === 0) return alert("Belum ada data yang disetujui untuk diexport!");
+
+      const ws = XLSX.utils.json_to_sheet(dataToExport);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Rekap Penggunaan");
+      XLSX.writeFile(wb, `Rekap_Ruangan_${year}_${month}.xlsx`);
+    }
+  </script>
+</body>
+</html>
