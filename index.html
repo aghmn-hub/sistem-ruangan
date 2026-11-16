@@ -4,71 +4,125 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pemesanan Ruangan</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root{--bg:#f5fbf9;--card:#fff;--ink:#14272e;--mut:#5d7078;--line:#d3e4df;--acc:#0e6b62;--on:#fff;--free:#e0f2e6;--free-i:#1d6a3b;--busy:#f8d9d5;--busy-i:#9b2c22;--part:#fbeac6;--part-i:#85560a;--pend:#e3e7f6;--pend-i:#37478c}
+:root{--bg:#f6f9f8;--card:#fff;--ink:#10282b;--mut:#61767a;--line:#e1eae7;--acc:#0f5f58;--on:#fff;--free:#e0f2e6;--free-i:#1d6a3b;--busy:#f8d9d5;--busy-i:#9b2c22;--part:#fbeac6;--part-i:#85560a;--pend:#e3e7f6;--pend-i:#37478c}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg) linear-gradient(180deg,#dcf3ed 0,var(--bg) 380px) no-repeat;color:var(--ink);font:15px/1.5 'Plus Jakarta Sans',system-ui,sans-serif}
-.wrap{max-width:1120px;margin:0 auto;padding:20px 16px 60px}
-h1{font-size:26px;letter-spacing:-.02em;margin:0}h2{font-size:17px;margin:0}
-.sub{color:var(--mut);margin:2px 0 0}small{color:var(--mut);font-size:12px}
-.top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:18px}
-nav{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:20px;overflow-x:auto}
-nav button{background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px;font:inherit;font-weight:600;color:var(--mut);cursor:pointer;white-space:nowrap}
+body{margin:0;background:var(--bg) linear-gradient(180deg,#dcf3ed 0,var(--bg) 380px) no-repeat;color:var(--ink);font:13px/1.5 'Plus Jakarta Sans',system-ui,sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:16px 14px 48px}
+h1{font-size:20px;letter-spacing:-.02em;margin:0}h2{font-size:14px;margin:0}
+.sub{color:var(--mut);margin:2px 0 0}small{color:var(--mut);font-size:11px}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:14px}
+nav{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:16px;overflow-x:auto}
+nav button{background:none;border:0;border-bottom:3px solid transparent;padding:8px 12px;font:inherit;font-weight:600;color:var(--mut);cursor:pointer;white-space:nowrap}
 nav button.on{color:var(--ink);border-color:var(--acc)}
-.badge{background:#c0392b;color:#fff;border-radius:99px;font-size:11px;padding:1px 7px;margin-left:6px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.ch{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.p{padding:18px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
-.stat{padding:14px 16px}.stat b{display:block;font-size:26px;line-height:1.15}.stat span{color:var(--mut);font-size:13px}
-.cols{display:grid;grid-template-columns:2fr 1fr;gap:16px;align-items:start}
-@media(max-width:860px){.cols{grid-template-columns:1fr}.stat b{font-size:22px}}
-.fg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.badge{background:#c0392b;color:#fff;border-radius:99px;font-size:10px;padding:0 6px;margin-left:5px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.ch{padding:10px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.p{padding:14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat{padding:10px 14px}.stat b{display:block;font-size:20px;line-height:1.2}.stat span{color:var(--mut);font-size:12px}
+.cols{display:grid;grid-template-columns:2fr 1fr;gap:14px;align-items:start}
+@media(max-width:860px){.cols{grid-template-columns:1fr}.stat b{font-size:18px}}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:560px){.fg{grid-template-columns:1fr}}
 .full{grid-column:1/-1}
-label{display:block;font-size:13px;font-weight:600;margin-bottom:4px}
-input,select{width:100%;font:inherit;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink)}
+label{display:block;font-size:12px;font-weight:600;margin-bottom:3px}
+input,select{width:100%;font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-.btn{font:inherit;font-weight:600;padding:9px 15px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.btn{font:inherit;font-weight:600;padding:7px 13px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .btn.pri{background:var(--acc);color:var(--on);border-color:var(--acc)}
 .btn.on{background:var(--acc);color:var(--on);border-color:var(--acc)}
 .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.note{padding:9px 12px;border-radius:9px;font-size:13px;margin-top:14px}
+.note{padding:8px 11px;border-radius:8px;font-size:12px;margin-top:12px}
 .note.ok{background:var(--free);color:var(--free-i)}.note.err{background:var(--busy);color:var(--busy-i)}.note.warn{background:var(--part);color:var(--part-i)}
-.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:700}
+.pill{display:inline-block;padding:1px 8px;border-radius:99px;font-size:11px;font-weight:700}
 .free{background:var(--free);color:var(--free-i)}.busy{background:var(--busy);color:var(--busy-i)}.part{background:var(--part);color:var(--part-i)}.pend{background:var(--pend);color:var(--pend-i)}
-.room{display:flex;width:100%;justify-content:space-between;align-items:center;gap:8px;text-align:left;font:inherit;color:inherit;background:none;border:0;border-bottom:1px solid var(--line);padding:11px 16px;cursor:pointer}
+.room{display:flex;width:100%;justify-content:space-between;align-items:center;gap:8px;text-align:left;font:inherit;color:inherit;background:none;border:0;border-bottom:1px solid var(--line);padding:9px 14px;cursor:pointer}
 .room:hover{background:var(--bg)}
-.strip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:14px 0}
-.strip button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:7px 2px;cursor:pointer;text-align:center}
-.strip button.on{background:var(--acc);color:var(--on);border-color:var(--acc)}.strip button.on small{color:var(--on)}
-.strip b{display:block;font-size:17px}.strip .td b{text-decoration:underline}
 .gw{overflow-x:auto;margin:0 -6px}
-table.g{border-collapse:separate;border-spacing:3px;width:100%;min-width:780px;table-layout:fixed}
-.g th{font-size:12px;font-weight:600;color:var(--mut);text-align:center}
+table.g{border-collapse:separate;border-spacing:3px;width:100%;min-width:700px;table-layout:fixed}
+.g th{font-size:11px;font-weight:600;color:var(--mut);text-align:center}
 .g th.now{color:var(--acc);font-weight:800}
-.g th.r{position:sticky;left:0;z-index:1;width:185px;background:var(--card);text-align:left;color:var(--ink);font-size:13px;padding:4px 6px}
-.g td.c{height:44px;border-radius:7px;font-size:11.5px;font-weight:600;padding:0 7px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.g th.r{position:sticky;left:0;z-index:1;width:160px;background:var(--card);text-align:left;color:var(--ink);font-size:12px;padding:3px 6px}
+.g td.c{height:36px;border-radius:6px;font-size:11px;font-weight:600;padding:0 6px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .g td.free{cursor:pointer}.g td.free:hover{outline:2px solid var(--acc)}
 .g td.pend{background:repeating-linear-gradient(45deg,var(--pend),var(--pend) 6px,transparent 6px,transparent 12px);border:1px dashed var(--pend-i)}
-ul.ag{list-style:none;margin:0;padding:0}.ag li{padding:11px 18px;border-bottom:1px solid var(--line)}.ag li:last-child{border:0}
-.item{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
-table.h{width:100%;border-collapse:collapse;font-size:14px}.h td{padding:11px 18px;border-bottom:1px solid var(--line)}
-.empty{padding:24px;text-align:center;color:var(--mut)}
+ul.ag{list-style:none;margin:0;padding:0}.ag li{padding:8px 14px;border-bottom:1px solid var(--line)}.ag li:last-child{border:0}
+.item{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+table.h{width:100%;border-collapse:collapse;font-size:12.5px}.h td{padding:8px 14px;border-bottom:1px solid var(--line)}
+.empty{padding:18px;text-align:center;color:var(--mut)}
+.cols.eq{grid-template-columns:1fr 1fr}
+@media(max-width:860px){.cols.eq{grid-template-columns:1fr}}
+.ag li.dh{background:var(--bg);font-weight:700;font-size:12px;padding:6px 14px}
+.btn.sm,input.sm,select.sm{padding:3px 8px;font-size:12px;border-radius:7px;width:auto}
+.gt{min-width:640px}
+.gh,.gr{display:grid;grid-template-columns:116px minmax(0,1fr)}
+.gdays,.gb{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.gdays div{text-align:center;font-size:11px;font-weight:600;color:var(--mut);padding:4px 0;border-left:1px solid var(--line)}
+.gdays div.td{color:var(--acc);font-weight:800}
+.gr{border-top:1px solid var(--line)}
+.gl{position:sticky;left:0;z-index:3;background:var(--card);padding:0 8px;font-size:11.5px;font-weight:600;display:flex;align-items:center}
+.gh .gl{font-size:11px;color:var(--mut);padding:4px 8px}
+.gb{row-gap:1px}
+.gc{grid-row:1/-1;border-left:1px solid var(--line)}.gc.td{background:rgba(14,107,98,.08)}
+.gbk{z-index:1;margin:0 2px;border-radius:4px;padding:0 6px;font-size:10.5px;font-weight:600;line-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--acc);color:var(--on)}
 .hidden{display:none!important}
 .modal{position:fixed;inset:0;background:rgba(10,20,25,.6);display:flex;align-items:center;justify-content:center;padding:16px;z-index:9}
 .modal .card{width:100%;max-width:400px}
-#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;font-weight:600;z-index:10;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-weight:600;z-index:10;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+/* ===== Tema elegan ===== */
+:root{--gold:#b98a3e;--gold-i:#8a6420;--sh:0 1px 2px rgba(16,40,43,.05),0 12px 28px -16px rgba(16,40,43,.2)}
+body{background:radial-gradient(820px 320px at 10% -100px,#d3eee7,transparent 70%),radial-gradient(620px 280px at 96% -80px,#f7ecd3,transparent 70%),var(--bg);background-repeat:no-repeat}
+h1,.stat b{font-family:'Fraunces',Georgia,serif;font-weight:600;letter-spacing:-.01em}
+h1{font-size:25px;line-height:1.15}
+.sub{font-size:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#17867b,#0f5f58);box-shadow:0 8px 16px -8px rgba(15,95,88,.7)}
+nav{display:flex;width:fit-content;max-width:100%;gap:2px;padding:4px;margin-bottom:18px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh)}
+nav button{border:0;border-radius:10px;padding:7px 15px;transition:background .15s,color .15s}
+nav button:hover{color:var(--ink);background:var(--bg)}
+nav button.on{background:var(--acc);color:#fff;box-shadow:0 5px 12px -6px rgba(15,95,88,.8)}
+.badge{background:var(--gold);color:#fff}
+.card{border-radius:16px;box-shadow:var(--sh)}
+.ch{padding:12px 16px;border-bottom-color:#edf2f0;background:linear-gradient(#fff,#fbfdfc)}
+.stat{position:relative;padding:12px 16px 12px 20px}
+.stat::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0;background:var(--c,var(--acc))}
+.stat:nth-child(1){--c:#2f9e63}.stat:nth-child(2){--c:var(--gold)}.stat:nth-child(3){--c:#17867b}
+.stat b{font-size:25px}
+input,select{background:#fff;border-color:#d9e4e1;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{outline:0;border-color:var(--acc);box-shadow:0 0 0 3px rgba(15,95,88,.14)}
+.btn{box-shadow:0 1px 1px rgba(16,40,43,.04);transition:background .15s,border-color .15s,filter .15s}
+.btn:hover:not(:disabled){border-color:#bfd2cd;background:var(--bg)}
+.btn.pri,.btn.on{background:linear-gradient(135deg,#17867b,#0f5f58);border-color:#0f5f58;color:#fff;box-shadow:0 8px 16px -8px rgba(15,95,88,.7)}
+.btn.pri:hover:not(:disabled),.btn.on:hover:not(:disabled){background:linear-gradient(135deg,#17867b,#0f5f58);filter:brightness(1.08)}
+.room{transition:background .15s}.room:hover{background:#f3f9f7}.room:last-child{border-bottom:0}
+.ag li>b:first-child{color:var(--ink)}
+.ag li.dh{background:#f3f9f7;color:var(--acc)}
+.h tr:hover{background:#fafcfb}
+.gt{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.gh,.gh .gl{background:#f4f9f7}
+.gdays div.td{color:var(--gold-i)}.gc.td{background:rgba(185,138,62,.1)}
+.gbk{background:linear-gradient(135deg,#17867b,#0f5f58);box-shadow:0 2px 5px -2px rgba(15,95,88,.55)}
+.g th.now{color:var(--gold-i)}
+.modal{background:rgba(12,32,34,.45);backdrop-filter:blur(4px)}
+.modal .card{box-shadow:0 28px 60px -20px rgba(0,0,0,.45)}
+#toast{background:#10282b;border-radius:10px}
+.view{animation:masuk .25s ease}
+@keyframes masuk{from{opacity:0;transform:translateY(5px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.ib{padding:6px 8px;line-height:0}
+.ib.del:hover:not(:disabled){color:#b3261e;border-color:#e8b9b4;background:#fdf1ef}
+.modal .card{max-height:92vh;overflow:auto}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
-    <div><h1>Pemesanan Ruangan</h1><p class="sub">Kantor Diponegoro &amp; Cipto</p></div>
-    <button class="btn hidden" id="btn-refresh">Muat ulang data</button>
+    <div class="brand"><div class="logo" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="3"/><path d="M3 9.5h18M8 3v3M16 3v3M8 14h3M13 14h3M8 17h3"/></svg></div><div><h1>Pemesanan Ruangan</h1><p class="sub">Kantor Diponegoro &amp; Cipto</p></div></div>
+    <div class="bar" style="flex-wrap:nowrap"><small id="sinkron"></small><button class="btn sm hidden" id="btn-refresh">Muat ulang data</button></div>
   </div>
   <div id="offline" class="note warn hidden" style="margin:0 0 16px">Mode offline: data hanya tersimpan di browser perangkat ini.</div>
 
@@ -107,6 +161,7 @@ table.h{width:100%;border-collapse:collapse;font-size:14px}.h td{padding:11px 18
       </div>
       <div class="card">
         <div class="ch" style="display:block"><h2>Status ruangan</h2><small id="side-label"></small></div>
+        <div class="p" style="padding:12px 14px 4px"><div class="bar"><button type="button" class="btn sm" id="sw-prev" aria-label="Hari sebelumnya">&lsaquo;</button><input type="date" class="sm" id="sw-date" aria-label="Pilih tanggal"><button type="button" class="btn sm" id="sw-next" aria-label="Hari berikutnya">&rsaquo;</button><button type="button" class="btn sm" id="sw-today">Hari ini</button></div></div>
         <div id="side"></div>
       </div>
     </div>
@@ -122,19 +177,18 @@ table.h{width:100%;border-collapse:collapse;font-size:14px}.h td{padding:11px 18
       <div class="ch">
         <h2>Ketersediaan ruangan</h2>
         <div class="bar">
-          <button class="btn" id="prev" aria-label="Hari sebelumnya">&lsaquo;</button>
-          <input type="date" id="cal-date" style="width:auto" aria-label="Pilih tanggal">
-          <button class="btn" id="next" aria-label="Hari berikutnya">&rsaquo;</button>
-          <button class="btn" id="today">Hari ini</button>
+          <button class="btn sm" id="prev" aria-label="Hari sebelumnya">&lsaquo;</button>
+          <input type="date" id="cal-date" class="sm" aria-label="Pilih tanggal">
+          <button class="btn sm" id="next" aria-label="Hari berikutnya">&rsaquo;</button>
+          <button class="btn sm" id="today">Hari ini</button>
         </div>
       </div>
       <div class="p">
         <div class="bar" id="seg">
-          <button class="btn" data-k="Semua">Semua kantor</button>
-          <button class="btn" data-k="Diponegoro">Diponegoro</button>
-          <button class="btn" data-k="Cipto">Cipto</button>
+          <button class="btn sm" data-k="Semua">Semua kantor</button>
+          <button class="btn sm" data-k="Diponegoro">Diponegoro</button>
+          <button class="btn sm" data-k="Cipto">Cipto</button>
         </div>
-        <div class="strip" id="strip"></div>
         <p id="cal-sum" style="margin:0 0 12px"></p>
         <div class="gw"><table class="g" id="grid"></table></div>
         <p style="margin:12px 0 0"><span class="pill free">Kosong</span> <span class="pill busy">Terisi</span> <span class="pill pend">Menunggu</span> <small>Klik slot kosong untuk langsung memesan.</small></p>
@@ -142,16 +196,31 @@ table.h{width:100%;border-collapse:collapse;font-size:14px}.h td{padding:11px 18
     </div>
     <div class="card" style="margin-bottom:16px"><div class="ch"><h2>Export</h2></div><div class="p"><p style="margin:0 0 12px;color:var(--mut)">Unduh kegiatan yang disetujui pada bulan terpilih dan status ruangan di tanggal terpilih.</p><button class="btn pri" id="btn-export">Unduh rekap Excel</button></div></div>
     <div class="card">
-      <div class="ch"><h2>Riwayat keputusan terakhir</h2></div>
-      <div style="overflow-x:auto"><table class="h"><tbody id="bmn-history"></tbody></table></div>
+      <div class="ch"><h2>Riwayat pemesanan</h2></div>
+      <div style="overflow:auto;max-height:480px"><table class="h"><tbody id="bmn-history"></tbody></table></div>
     </div>
   </section>
 
   <!-- REKAP -->
   <section id="v-rekap" class="view hidden">
-    <div class="cols">
+    <div class="card" style="margin-bottom:16px">
+      <div class="ch">
+        <h2>Kalender mingguan</h2>
+        <div class="bar">
+          <button class="btn sm" id="wk-prev" aria-label="Minggu sebelumnya">&lsaquo;</button>
+          <input type="date" id="wk-date" class="sm" aria-label="Pilih tanggal">
+          <button class="btn sm" id="wk-next" aria-label="Minggu berikutnya">&rsaquo;</button>
+          <button class="btn sm" id="wk-today">Minggu ini</button>
+        </div>
+      </div>
+      <div class="p">
+        <b id="wk-title" style="display:block;margin-bottom:8px"></b>
+        <div style="overflow-x:auto"><div class="gt" id="wk"></div></div>
+      </div>
+    </div>
+    <div class="cols eq">
       <div class="card"><div class="ch" style="display:block"><h2>Agenda hari ini</h2><small id="rekap-tgl"></small></div><ul class="ag" id="agenda"></ul></div>
-      <div class="card"><div class="ch" style="display:block"><h2>Ruangan yang masih kosong</h2><small id="kosong-sum"></small></div><ul class="ag" id="kosong"></ul></div>
+      <div class="card"><div class="ch" style="display:block"><h2>Agenda 7 hari ke depan</h2><small id="agenda7-tgl"></small></div><ul class="ag" id="agenda7"></ul></div>
     </div>
   </section>
 </div>
@@ -166,16 +235,37 @@ table.h{width:100%;border-collapse:collapse;font-size:14px}.h td{padding:11px 18
     </div>
   </form>
 </div>
+<div id="modal-edit" class="modal hidden">
+  <form id="form-edit" class="card" style="max-width:560px">
+    <div class="ch"><h2>Edit pemesanan</h2></div>
+    <div class="p">
+      <div class="fg">
+        <div class="full"><label for="e-kegiatan">Nama kegiatan</label><input required id="e-kegiatan"></div>
+        <div><label for="e-tim">Tim kerja</label><select id="e-tim"></select></div>
+        <div><label for="e-pemesan">Nama pemesan / PJ</label><input required id="e-pemesan"></div>
+        <div><label for="e-peserta">Jumlah peserta</label><input type="number" min="1" id="e-peserta"></div>
+        <div><label for="e-kantor">Kantor</label><select id="e-kantor"><option value="Diponegoro">Kantor Diponegoro</option><option value="Cipto">Kantor Cipto</option></select></div>
+        <div class="full"><label for="e-ruangan">Ruangan</label><select id="e-ruangan"></select></div>
+        <div><label for="e-tgl1">Tanggal mulai</label><input required type="date" id="e-tgl1"></div>
+        <div><label for="e-tgl2">Tanggal selesai</label><input required type="date" id="e-tgl2"></div>
+        <div><label for="e-w1">Jam mulai</label><input required type="time" id="e-w1"></div>
+        <div><label for="e-w2">Jam selesai</label><input required type="time" id="e-w2"></div>
+      </div>
+      <div id="e-info" class="note hidden"></div>
+      <div class="bar" style="justify-content:flex-end;margin-top:16px"><button type="button" class="btn" id="e-batal">Batal</button><button class="btn pri" type="submit">Simpan perubahan</button></div>
+    </div>
+  </form>
+</div>
 <div id="toast" class="hidden" role="status"></div>
 
 <script>
 // ===== KONFIGURASI =====
-const API = 'https://script.google.com/macros/s/AKfycbwbQVWcwspFQnGzwhqdE3PuPMVw4KfSwcJOlKIH9fLoQguWoJk5ucVhg40WlNn8dj1mUg/exec'; // kosongkan untuk mode offline
+const API = 'https://script.google.com/a/macros/dikbud.belajar.id/s/AKfycbwbQVWcwspFQnGzwhqdE3PuPMVw4KfSwcJOlKIH9fLoQguWoJk5ucVhg40WlNn8dj1mUg/exec'; // kosongkan untuk mode offline
 const PASSWORD_BMN = 'AdminBMN26';
 const J0 = 8, J1 = 17; // jam operasional 08:00-17:00; ruangan "Penuh" bila semua jam ini terisi
 const KANTOR = {
   Diponegoro: ["Bale Mayapada (20 orang)","Bale Perceka (50 orang)","Bale Wiwaha (12 orang)","Bale Winaya (50 orang)","Bale Sawala (50 orang)","Bale Atikan (45 orang)","Bale Rucita (100 org tanpa meja / 70 org dgn meja)","Rempug Jukung (250 org tanpa meja / 120 org dgn meja)"],
-  Cipto: ["Calakan 1 (30 orang)","Calakan 2 (42 orang)","Calakan 3 (36 orang)","Calakan 4 (25 orang)","Sabilulungan (35-45 orang)"]
+  Cipto: ["Calakan 1 (30 orang)","Calakan 2 (42 orang)","Calakan 3 (36 orang)","Calakan 4 (25 orang)","Sabilulungan (35-45 orang)","Aula Binangkit (200 orang)"]
 };
 const TIM = ["Kepala Balai","Kepala Bagian Umum","Satuan Pengawasan Intern","Perencanaan","Keuangan","Talpeg PSDM","Kepustakaan","Humas, Publikasi dan Keprotokolan","Kesekretariatan Pimpinan","Barang Milik Negara","Persuratan, Kearsipan dan Dokumentasi","Kerumahtanggaan","Tim 1","Tim 2","Tim 3","Tim 4","Kelompok Fungsional","SEAQIS","SEAMEO CECCEP","Front Desk"];
 
@@ -195,7 +285,7 @@ const nama = r => r.split(' (')[0];
 const kap = r => (r.match(/\((.*)\)/) || [,''])[1];
 const semuaRuang = k => Object.entries(KANTOR).filter(([x]) => !k || k === 'Semua' || x === k).flatMap(([x, l]) => l.map(r => ({k: x, r})));
 
-let bookings = [], calDate = hariIni(), calKantor = 'Semua';
+let bookings = [], calDate = hariIni(), calKantor = 'Semua', wkDate = hariIni(), tulis = 0;
 
 // ===== LOGIKA JADWAL =====
 const aktif = (b, t) => b.tanggalMulai <= t && b.tanggalSelesai >= t;
@@ -218,21 +308,56 @@ function ringkas(r, t) {
   return busy >= n ? {busy, n, label:'Penuh', cls:'busy'} : busy ? {busy, n, label:'Sebagian', cls:'part'} : {busy, n, label:'Kosong', cls:'free'};
 }
 
+// ===== NORMALISASI DATA SPREADSHEET =====
+// Spreadsheet kadang mengirim tanggal/jam sebagai ISO (mis. 2026-11-22T17:00:00.000Z atau 1899-12-30T00:52:48.000Z).
+const WIB = 7 * 3600e3, ISO = /^\d{4}-\d{2}-\d{2}T/;
+const dmy = s => String(s || '').split('-').reverse().join('-');
+const rentangTgl = b => dmy(b.tanggalMulai) + (b.tanggalSelesai !== b.tanggalMulai ? ' s.d. ' + dmy(b.tanggalSelesai) : '');
+function rapiTgl(v) {
+  v = String(v == null ? '' : v).trim();
+  if (ISO.test(v)) { const d = new Date(v); return isNaN(d) ? v.slice(0, 10) : new Date(d.getTime() + WIB).toISOString().slice(0, 10); }
+  const m = v.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+  return m ? `${m[3]}-${pad(m[2])}-${pad(m[1])}` : v;
+}
+function rapiJam(v) {
+  v = String(v == null ? '' : v).trim();
+  if (ISO.test(v)) {
+    const d = new Date(v); if (isNaN(d)) return v;
+    const det = d.getUTCHours() * 3600 + d.getUTCMinutes() * 60 + d.getUTCSeconds();
+    const t = v.startsWith('1899') ? (det + 25632) % 86400 : ((det + 7 * 3600) % 86400); // 1899: zona waktu lama WIB (+7j07m12d)
+    const mm = Math.round(t / 60); return `${pad(Math.floor(mm / 60) % 24)}:${pad(mm % 60)}`;
+  }
+  const m = v.match(/^(\d{1,2})[:.](\d{2})/);
+  return m ? `${pad(m[1])}:${m[2]}` : v;
+}
+const kunci = r => nama(String(r || '')).toLowerCase().replace(/\s+/g, ' ').trim();
+const kanon = r => (semuaRuang().find(x => kunci(x.r) === kunci(r)) || {r}).r;
+const STATUS = {disetujui: 'Disetujui', menunggu: 'Menunggu', ditolak: 'Ditolak'};
+function rapiBooking(x) {
+  const b = {...x, id: Number(x.id)};
+  b.ruangan = kanon(x.ruangan);
+  b.tanggalMulai = rapiTgl(x.tanggalMulai); b.tanggalSelesai = rapiTgl(x.tanggalSelesai) || b.tanggalMulai;
+  b.waktuMulai = rapiJam(x.waktuMulai); b.waktuSelesai = rapiJam(x.waktuSelesai);
+  b.kantor = Object.keys(KANTOR).find(k => KANTOR[k].includes(b.ruangan)) || String(x.kantor || '').trim();
+  b.status = STATUS[String(x.status || '').trim().toLowerCase()] || 'Menunggu';
+  return b;
+}
+
 // ===== DATA =====
 async function load() {
-  try { bookings = JSON.parse(localStorage.getItem('roomBookings')) || []; } catch (e) { bookings = []; }
+  try { bookings = (JSON.parse(localStorage.getItem('roomBookings')) || []).map(rapiBooking); } catch (e) { bookings = []; }
   refresh();
   if (!API) { $('offline').classList.remove('hidden'); return; }
   $('btn-refresh').classList.remove('hidden');
   try {
     const d = await (await fetch(API)).json();
-    bookings = d.filter(x => x.id).map(x => ({...x, id: Number(x.id)}));
-    simpan(); $('offline').classList.add('hidden');
-  } catch (e) { $('offline').classList.remove('hidden'); }
+    bookings = d.filter(x => x.id).map(rapiBooking);
+    simpan(); $('offline').classList.add('hidden'); $('sinkron').textContent = 'Sinkron ' + new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'});
+  } catch (e) { $('offline').classList.remove('hidden'); $('sinkron').textContent = ''; }
   refresh();
 }
 const simpan = () => { try { localStorage.setItem('roomBookings', JSON.stringify(bookings)); } catch (e) {} };
-const sync = (action, data) => { if (API) fetch(API, {method:'POST', body: JSON.stringify({action, data})}).catch(() => {}); };
+const sync = (action, data) => { tulis = Date.now(); if (API) fetch(API, {method:'POST', body: JSON.stringify({action, data})}).catch(() => {}); };
 function toast(m) { const t = $('toast'); t.textContent = m; t.classList.remove('hidden'); clearTimeout(toast.id); toast.id = setTimeout(() => t.classList.add('hidden'), 3200); }
 
 // ===== FORM =====
@@ -249,7 +374,7 @@ function cekForm() {
   if (mnt(b.waktuSelesai) <= mnt(b.waktuMulai)) return tampil('err', 'Jam selesai harus setelah jam mulai.');
   b.id = 0;
   const k = bentrok(b, 'Disetujui');
-  if (k) return tampil('err', `Bentrok pada ${k.t}: ${k.x.kegiatan} (${k.x.waktuMulai}-${k.x.waktuSelesai}). Pilih jam atau ruangan lain.`);
+  if (k) return tampil('err', `Bentrok pada ${dmy(k.t)}: ${k.x.kegiatan} (${k.x.waktuMulai}-${k.x.waktuSelesai}). Pilih jam atau ruangan lain.`);
   const m = parseInt(kap(b.ruangan)) || 0;
   if (m && b.jumlahPeserta && +b.jumlahPeserta > m) return tampil('warn', `Jumlah peserta melebihi kapasitas ruangan (${kap(b.ruangan)}).`);
   if (bentrok(b, 'Menunggu')) return tampil('warn', 'Ada pengajuan lain yang masih menunggu persetujuan di slot ini.');
@@ -271,6 +396,7 @@ function kirim(e) {
 function renderSamping() {
   const k = $('input-kantor').value, t = $('input-tgl-mulai').value;
   if (!t) return;
+  $('sw-date').value = t;
   $('side-label').textContent = `Kantor ${k}, ${fmtTgl(t)}`;
   $('side').innerHTML = KANTOR[k].map(r => { const s = ringkas(r, t);
     return `<button type="button" class="room" data-r="${esc(r)}"><span><b>${esc(nama(r))}</b><br><small>${s.busy} dari ${s.n} jam terisi</small></span><span class="pill ${s.cls}">${s.label}</span></button>`; }).join('');
@@ -283,17 +409,61 @@ function ubah(id, status) {
   bookings = bookings.map(x => x.id === id ? {...x, status} : x);
   simpan(); sync('updateStatus', {id, status}); refresh();
 }
+const IC = d => `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const ikon = id => `<button class="btn ib" title="Edit" aria-label="Edit" onclick="edit(${id})">${IC('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/>')}</button><button class="btn ib del" title="Hapus" aria-label="Hapus" onclick="hapus(${id})">${IC('<path d="M3 6h18"/><path d="M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/>')}</button>`;
+let editId = null;
+const dataEdit = () => { const v = i => $(i).value.trim(); return {...bookings.find(x => x.id === editId), kegiatan: v('e-kegiatan'), tim: $('e-tim').value, pemesan: v('e-pemesan'), jumlahPeserta: v('e-peserta'),
+  kantor: $('e-kantor').value, ruangan: $('e-ruangan').value, tanggalMulai: v('e-tgl1'), tanggalSelesai: v('e-tgl2'), waktuMulai: v('e-w1'), waktuSelesai: v('e-w2')}; };
+function isiRuanganE(pilih) {
+  const l = KANTOR[$('e-kantor').value];
+  $('e-ruangan').innerHTML = (pilih && !l.includes(pilih) ? [...l, pilih] : l).map(r => `<option value="${esc(r)}">${esc(r)}</option>`).join('');
+  if (pilih) $('e-ruangan').value = pilih;
+}
+function edit(id) {
+  const b = bookings.find(x => x.id === id); if (!b) return;
+  editId = id;
+  $('e-tim').innerHTML = (TIM.includes(b.tim) ? TIM : [...TIM, b.tim]).map(t => `<option>${esc(t)}</option>`).join('');
+  $('e-tim').value = b.tim;
+  $('e-kantor').value = Object.keys(KANTOR).find(k => KANTOR[k].includes(b.ruangan)) || b.kantor || 'Diponegoro';
+  isiRuanganE(b.ruangan);
+  $('e-kegiatan').value = b.kegiatan; $('e-pemesan').value = b.pemesan; $('e-peserta').value = b.jumlahPeserta || '';
+  $('e-tgl1').value = b.tanggalMulai; $('e-tgl2').value = b.tanggalSelesai; $('e-w1').value = b.waktuMulai; $('e-w2').value = b.waktuSelesai;
+  $('modal-edit').classList.remove('hidden'); cekEdit(); $('e-kegiatan').focus();
+}
+function cekEdit() {
+  const b = dataEdit(), el = $('e-info');
+  const tampil = (c, m) => { el.className = 'note ' + c; el.textContent = m; return c !== 'err'; };
+  if (!b.kegiatan || !b.pemesan || !b.tanggalMulai || !b.tanggalSelesai || !b.waktuMulai || !b.waktuSelesai) return tampil('err', 'Lengkapi semua kolom wajib.');
+  if (b.tanggalSelesai < b.tanggalMulai) return tampil('err', 'Tanggal selesai tidak boleh sebelum tanggal mulai.');
+  if (mnt(b.waktuSelesai) <= mnt(b.waktuMulai)) return tampil('err', 'Jam selesai harus setelah jam mulai.');
+  const k = b.status !== 'Ditolak' && bentrok(b, 'Disetujui');
+  if (k) return b.status === 'Disetujui' ? tampil('err', `Bentrok dengan "${k.x.kegiatan}" pada ${dmy(k.t)}. Ubah jam atau ruangan.`) : tampil('warn', `Bentrok dengan "${k.x.kegiatan}" pada ${dmy(k.t)}. Pengajuan ini belum bisa disetujui selama masih bentrok.`);
+  el.className = 'hidden'; return true;
+}
+function simpanEdit(e) {
+  e.preventDefault();
+  if (!cekEdit()) return;
+  const nb = dataEdit();
+  bookings = bookings.map(x => x.id === editId ? nb : x);
+  simpan(); sync('update', nb); $('modal-edit').classList.add('hidden'); refresh(); toast('Perubahan disimpan.');
+}
+function hapus(id) {
+  const b = bookings.find(x => x.id === id);
+  if (!b || !confirm(`Hapus pemesanan "${b.kegiatan}" (${b.tanggalMulai}, ${nama(b.ruangan)})? Tindakan ini tidak bisa dibatalkan.`)) return;
+  bookings = bookings.filter(x => x.id !== id);
+  simpan(); sync('delete', {id}); refresh(); toast('Pemesanan dihapus.');
+}
 function renderBMN() {
   const wait = bookings.filter(b => b.status === 'Menunggu');
   $('bmn-count').textContent = wait.length;
   $('bmn-pending').innerHTML = wait.length ? wait.map(b => { const k = bentrok(b, 'Disetujui');
     return `<div class="item"><div><b>${esc(b.kegiatan)}</b><br><small>${esc(b.tim)}, ${esc(b.pemesan)} (${esc(b.jumlahPeserta || 0)} orang)</small>
-      <div style="margin-top:6px">${esc(b.kantor)}, ${esc(nama(b.ruangan))}</div><small>${esc(b.tanggalMulai)}${b.tanggalSelesai !== b.tanggalMulai ? ' s.d. ' + esc(b.tanggalSelesai) : ''}, ${esc(b.waktuMulai)}-${esc(b.waktuSelesai)} WIB</small>
-      ${k ? `<div class="note err" style="margin-top:8px">Bentrok dengan "${esc(k.x.kegiatan)}" pada ${esc(k.t)}.</div>` : ''}</div>
-      <div class="bar" style="align-self:flex-start"><button class="btn" ${k ? 'disabled' : ''} onclick="ubah(${b.id},'Disetujui')">Setujui</button><button class="btn" onclick="ubah(${b.id},'Ditolak')">Tolak</button></div></div>`; }).join('')
+      <div style="margin-top:6px">${esc(b.kantor)}, ${esc(nama(b.ruangan))}</div><small>${rentangTgl(b)}, ${esc(b.waktuMulai)}-${esc(b.waktuSelesai)} WIB</small>
+      ${k ? `<div class="note err" style="margin-top:8px">Bentrok dengan "${esc(k.x.kegiatan)}" pada ${dmy(k.t)}.</div>` : ''}</div>
+      <div class="bar" style="align-self:flex-start"><button class="btn" ${k ? 'disabled' : ''} onclick="ubah(${b.id},'Disetujui')">Setujui</button><button class="btn" onclick="ubah(${b.id},'Ditolak')">Tolak</button>${ikon(b.id)}</div></div>`; }).join('')
     : '<div class="empty">Tidak ada pemesanan yang menunggu.</div>';
-  const his = bookings.filter(b => b.status !== 'Menunggu').sort((a, b) => b.id - a.id).slice(0, 10);
-  $('bmn-history').innerHTML = his.length ? his.map(b => `<tr><td><b>${esc(b.kegiatan)}</b><br><small>${esc(b.tim)}, ${esc(b.pemesan)}</small></td><td>${esc(b.tanggalMulai)}<br><small>${esc(nama(b.ruangan))}</small></td><td style="text-align:right"><span class="pill ${b.status === 'Disetujui' ? 'free' : 'busy'}">${esc(b.status)}</span></td></tr>`).join('')
+  const his = bookings.filter(b => b.status !== 'Menunggu').sort((a, b) => String(b.tanggalMulai).localeCompare(String(a.tanggalMulai)) || b.id - a.id);
+  $('bmn-history').innerHTML = his.length ? his.map(b => `<tr><td><b>${esc(b.kegiatan)}</b><br><small>${esc(b.tim)}, ${esc(b.pemesan)}</small></td><td>${rentangTgl(b)}<br><small>${esc(nama(b.ruangan))}</small></td><td style="text-align:right;white-space:nowrap"><span class="pill ${b.status === 'Disetujui' ? 'free' : 'busy'}">${esc(b.status)}</span> ${ikon(b.id)}</td></tr>`).join('')
     : '<tr><td class="empty">Belum ada riwayat.</td></tr>';
 }
 
@@ -301,9 +471,7 @@ function renderBMN() {
 function renderKal() {
   $('cal-date').value = calDate;
   document.querySelectorAll('#seg button').forEach(b => b.classList.toggle('on', b.dataset.k === calKantor));
-  const sen = addDays(calDate, -((parse(calDate).getDay() + 6) % 7)), today = hariIni();
-  $('strip').innerHTML = [0,1,2,3,4,5,6].map(i => { const t = addDays(sen, i), n = bookings.filter(b => b.status === 'Disetujui' && aktif(b, t)).length;
-    return `<button data-d="${t}" class="${t === calDate ? 'on' : ''} ${t === today ? 'td' : ''}"><small>${HARI[parse(t).getDay()]}</small><b>${parse(t).getDate()}</b><small>${n ? n + ' acara' : 'kosong'}</small></button>`; }).join('');
+  const today = hariIni();
 
   const nowH = new Date().getHours(), isToday = calDate === today, rooms = semuaRuang(calKantor), sum = {Penuh:0, Sebagian:0, Kosong:0};
   let head = '<tr><th class="r">Ruangan</th>', rows = '';
@@ -326,22 +494,39 @@ function renderKal() {
 
 }
 
+const bt = b => `<li><b>${esc(b.kegiatan)}</b><br><small>${esc(nama(b.ruangan))}, ${esc(b.kantor)}</small></li>`;
+const agendaHari = t => bookings.filter(b => b.status === 'Disetujui' && aktif(b, t)).sort((a, b) => mnt(a.waktuMulai) - mnt(b.waktuMulai));
+const tglPendek = s => parse(s).toLocaleDateString('id-ID', {day:'numeric', month:'short'});
 function renderRekap() {
-  const t = hariIni(), semua = semuaRuang();
+  const t = hariIni();
   $('rekap-tgl').textContent = fmtTgl(t);
-  const ag = bookings.filter(b => b.status === 'Disetujui' && aktif(b, t)).sort((a, b) => mnt(a.waktuMulai) - mnt(b.waktuMulai));
-  $('agenda').innerHTML = ag.length ? ag.map(b => `<li><b>${esc(b.waktuMulai)}-${esc(b.waktuSelesai)}</b> ${esc(b.kegiatan)}<br><small>${esc(nama(b.ruangan))}, ${esc(b.kantor)}, ${esc(b.tim)}</small></li>`).join('') : '<li class="empty">Belum ada kegiatan terjadwal hari ini.</li>';
-  const info = semua.map(({k, r}) => {
-    const s = ringkas(r, t), win = []; let a = null;
-    for (let h = J0; h <= J1; h++) {
-      const free = h < J1 && slot(r, t, h).s !== 'busy';
-      if (free && a === null) a = h;
-      if (!free && a !== null) { win.push(`${pad(a)}:00-${pad(h)}:00`); a = null; }
-    }
-    return {k, r, s, win};
-  }).filter(x => x.s.label !== 'Penuh').sort((x, y) => x.s.busy - y.s.busy);
-  $('kosong-sum').textContent = `${info.length} dari ${semua.length} ruangan masih tersedia`;
-  $('kosong').innerHTML = info.length ? info.map(x => `<li><b>${esc(nama(x.r))}</b> <span class="pill ${x.s.cls}">${x.s.label}</span><br><small>${x.k}, ${esc(kap(x.r))}</small><br>Kosong: ${x.win.join(', ')}</li>`).join('') : '<li class="empty">Semua ruangan penuh hari ini.</li>';
+  const ag = agendaHari(t);
+  $('agenda').innerHTML = ag.length ? ag.map(bt).join('') : '<li class="empty">Belum ada kegiatan terjadwal hari ini.</li>';
+  let h = '';
+  for (let i = 1; i <= 7; i++) { const d = addDays(t, i), l = agendaHari(d); if (l.length) h += `<li class="dh">${fmtTgl(d)}</li>` + l.map(bt).join(''); }
+  $('agenda7-tgl').textContent = `${tglPendek(addDays(t, 1))} - ${tglPendek(addDays(t, 7))}`;
+  $('agenda7').innerHTML = h || '<li class="empty">Belum ada agenda dalam 7 hari ke depan.</li>';
+  renderMinggu();
+}
+function renderMinggu() {
+  $('wk-date').value = wkDate;
+  const sen = addDays(wkDate, -((parse(wkDate).getDay() + 6) % 7)), mgg = addDays(sen, 6), today = hariIni();
+  const sel = (x, y) => Math.round((parse(x) - parse(y)) / 864e5), hari = [0,1,2,3,4,5,6].map(i => addDays(sen, i));
+  $('wk-title').textContent = `${parse(sen).toLocaleDateString('id-ID', {day:'numeric', month:'long'})} - ${parse(mgg).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'})}`;
+  let html = '<div class="gh"><div class="gl">Ruangan</div><div class="gdays">' + hari.map(t => `<div class="${t === today ? 'td' : ''}">${HARI[parse(t).getDay()]} ${parse(t).getDate()}</div>`).join('') + '</div></div>';
+  semuaRuang().forEach(({r}) => {
+    const ev = bookings.filter(b => b.ruangan === r && b.status === 'Disetujui' && b.tanggalMulai <= mgg && b.tanggalSelesai >= sen)
+      .map(b => ({b, s: Math.max(0, sel(b.tanggalMulai, sen)), e: Math.min(6, sel(b.tanggalSelesai, sen))}))
+      .sort((x, y) => x.s - y.s || mnt(x.b.waktuMulai) - mnt(y.b.waktuMulai));
+    const lanes = [];
+    ev.forEach(x => { let l = lanes.findIndex(end => end < x.s); if (l < 0) { l = lanes.length; lanes.push(-1); } lanes[l] = x.e; x.l = l; });
+    const L = Math.max(1, lanes.length);
+    html += `<div class="gr"><div class="gl">${esc(nama(r))}</div><div class="gb" style="grid-template-rows:2px repeat(${L},18px) 2px">`
+      + hari.map((t, i) => `<div class="gc ${t === today ? 'td' : ''}" style="grid-column:${i + 1}"></div>`).join('')
+      + ev.map(x => `<div class="gbk" style="grid-column:${x.s + 1}/${x.e + 2};grid-row:${x.l + 2}" title="${esc(x.b.kegiatan)}, ${esc(x.b.tim)}, ${esc(x.b.tanggalMulai)}${x.b.tanggalSelesai !== x.b.tanggalMulai ? ' s.d. ' + esc(x.b.tanggalSelesai) : ''}, ${esc(x.b.waktuMulai)}-${esc(x.b.waktuSelesai)}">${esc(x.b.kegiatan)}</div>`).join('')
+      + '</div></div>';
+  });
+  $('wk').innerHTML = html;
 }
 
 function exportExcel() {
@@ -394,7 +579,6 @@ document.addEventListener('DOMContentLoaded', () => {
   $('next').onclick = () => gantiTgl(addDays(calDate, 1));
   $('today').onclick = () => gantiTgl(hariIni());
   $('cal-date').onchange = e => gantiTgl(e.target.value);
-  $('strip').onclick = e => { const b = e.target.closest('button'); if (b) gantiTgl(b.dataset.d); };
   $('seg').onclick = e => { const b = e.target.closest('button'); if (b) { calKantor = b.dataset.k; renderKal(); } };
   $('grid').onclick = e => {
     const c = e.target.closest('td.free'); if (!c) return;
@@ -404,9 +588,26 @@ document.addEventListener('DOMContentLoaded', () => {
     $('input-waktu-mulai').value = pad(h) + ':00'; $('input-waktu-selesai').value = pad(h + 1) + ':00';
     tab('pemohon'); cekForm(); renderSamping(); $('input-kegiatan').focus();
   };
+  const setTgl = t => { if (!t) return; $('input-tgl-mulai').value = $('input-tgl-selesai').value = t; cekForm(); renderSamping(); };
+  $('sw-date').onchange = e => setTgl(e.target.value);
+  $('sw-prev').onclick = () => setTgl(addDays($('input-tgl-mulai').value || hariIni(), -1));
+  $('sw-next').onclick = () => setTgl(addDays($('input-tgl-mulai').value || hariIni(), 1));
+  $('sw-today').onclick = () => setTgl(hariIni());
+  const gw = t => { if (t) { wkDate = t; renderMinggu(); } };
+  $('wk-prev').onclick = () => gw(addDays(wkDate, -7));
+  $('wk-next').onclick = () => gw(addDays(wkDate, 7));
+  $('wk-today').onclick = () => gw(hariIni());
+  $('wk-date').onchange = e => gw(e.target.value);
+  $('form-edit').onsubmit = simpanEdit;
+  $('e-batal').onclick = () => $('modal-edit').classList.add('hidden');
+  $('e-kantor').onchange = () => { isiRuanganE(); cekEdit(); };
+  ['e-ruangan','e-tgl1','e-tgl2','e-w1','e-w2','e-kegiatan','e-pemesan'].forEach(i => $(i).oninput = cekEdit);
   $('btn-export').onclick = exportExcel;
   $('btn-refresh').onclick = load;
   load();
+  const auto = () => { if (API && !document.hidden && Date.now() - tulis > 8000) load(); };
+  setInterval(auto, 60000);
+  document.addEventListener('visibilitychange', auto);
 });
 </script>
 </body>
