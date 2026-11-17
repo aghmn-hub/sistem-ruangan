@@ -159,6 +159,34 @@ input::placeholder{color:#9bb0ad}
 .tag{display:inline-block;padding:1px 9px;border-radius:99px;background:#e2f2ee;color:#0f5f58;font-size:11px;font-weight:700}
 .tag.c{background:#e3edf9;color:#2a5fa0}
 .empty{color:var(--mut)}
+.tls{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.tl{position:relative;border:1px solid var(--line);border-radius:12px;padding:10px 14px 10px 17px;background:#fff}
+.tl::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:0 3px 3px 0;background:var(--c)}
+.tl b{display:block;font:600 22px 'Fraunces',Georgia,serif;line-height:1.2}.tl span{font-size:11.5px;color:var(--mut)}
+.an{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.ab{border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.ab h3{margin:0 0 8px;font-size:12px}.ab .none{color:var(--mut);font-size:12px}
+.br{display:grid;grid-template-columns:minmax(70px,38%) 1fr 26px;gap:8px;align-items:center;margin:6px 0;font-size:11.5px}
+.br span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.br b{text-align:right}
+.bt{height:8px;border-radius:99px;background:#eef3f2;overflow:hidden}.bt i{display:block;height:100%;border-radius:99px}
+.ab.wide{grid-column:1/-1}.ab h3 small{font-weight:400}
+.cc{position:relative;display:flex;gap:6px;padding:4px 2px 0}
+.cc::before{content:"";position:absolute;left:0;right:0;top:4px;bottom:20px;background:linear-gradient(to top,#e6eeec 1px,transparent 1px) 0 0/100% 25%;pointer-events:none}
+.cl{position:relative;flex:1;min-width:0}
+.cp{height:150px;display:flex;align-items:flex-end;justify-content:center}
+.cb{position:relative;width:62%;max-width:36px;border-radius:7px 7px 2px 2px;transition:filter .15s}
+.cb b{position:absolute;top:-17px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700}
+.cl:hover .cb{filter:brightness(1.12)}
+.cl span{display:block;height:20px;line-height:20px;text-align:center;font-size:11px;color:var(--mut)}
+.cl.now span{color:var(--acc);font-weight:800}
+table.g{min-width:790px}
+.g th.r{width:250px;padding:5px 10px}
+.g td.c{height:42px}
+.rl{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.rn{min-width:0;flex:1;display:flex;flex-direction:column;gap:1px}
+.rn b{font-size:12.5px}
+.rn small,.rs small{font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rs{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right}
 </style>
 </head>
 <body>
@@ -246,6 +274,7 @@ input::placeholder{color:#9bb0ad}
 
   <!-- REKAP -->
   <section id="v-rekap" class="view hidden">
+    <div class="bar" style="margin-bottom:12px"><small>Periode</small><select id="an-bulan" class="sm" aria-label="Bulan"></select><select id="an-tahun" class="sm" aria-label="Tahun"></select></div>
     <div class="card" style="margin-bottom:16px">
       <div class="ch hc-b">
         <h2>Kalender mingguan</h2>
@@ -262,6 +291,7 @@ input::placeholder{color:#9bb0ad}
       </div>
     </div>
     <div class="card"><div class="ch hc-a" style="display:block"><h2>Agenda hari ini</h2><small id="rekap-tgl"></small></div><div style="overflow-x:auto"><table class="h tb tg"><thead><tr><th style="width:32%">Nama Kegiatan</th><th style="width:20%">Waktu</th><th style="width:30%">Nama Ruangan</th><th>Lokasi</th></tr></thead><tbody id="agenda"></tbody></table></div></div>
+    <div class="card" style="margin-top:16px"><div class="ch hc-d" style="display:block"><h2>Analisis pemesanan</h2><small id="an-label"></small></div><div class="p" id="analisis"></div></div>
   </section>
 </div>
 
@@ -302,7 +332,7 @@ input::placeholder{color:#9bb0ad}
 // ===== KONFIGURASI =====
 const API = 'https://script.google.com/a/macros/dikbud.belajar.id/s/AKfycbwbQVWcwspFQnGzwhqdE3PuPMVw4KfSwcJOlKIH9fLoQguWoJk5ucVhg40WlNn8dj1mUg/exec'; // kosongkan untuk mode offline
 const PASSWORD_BMN = 'AdminBMN26';
-const J0 = 8, J1 = 17; // jam operasional 08:00-17:00; ruangan "Penuh" bila semua jam ini terisi
+const J0 = 8, J1 = 16, PENUH = 15; // jam efektif 08.00-16.00 (8 jam); kolom ditandai sampai jam selesai; "Penuh" bila terisi 08.00 s.d. 15.00 atau lebih
 const KANTOR = {
   Diponegoro: ["Bale Mayapada (20 orang)","Bale Perceka (50 orang)","Bale Wiwaha (12 orang)","Bale Winaya (50 orang)","Bale Sawala (50 orang)","Bale Atikan (45 orang)","Bale Rucita (100 org tanpa meja / 70 org dgn meja)","Rempug Jukung (250 org tanpa meja / 120 org dgn meja)"],
   Cipto: ["Calakan 1 (30 orang)","Calakan 2 (42 orang)","Calakan 3 (36 orang)","Calakan 4 (25 orang)","Sabilulungan (35-45 orang)","Aula Binangkit (200 orang)"]
@@ -325,7 +355,7 @@ const nama = r => r.split(' (')[0];
 const kap = r => (r.match(/\((.*)\)/) || [,''])[1];
 const semuaRuang = k => Object.entries(KANTOR).filter(([x]) => !k || k === 'Semua' || x === k).flatMap(([x, l]) => l.map(r => ({k: x, r})));
 
-let bookings = [], calDate = hariIni(), calKantor = 'Semua', wkDate = hariIni(), tulis = 0;
+let bookings = [], calDate = hariIni(), calKantor = 'Diponegoro', wkDate = hariIni(), tulis = 0;
 
 // ===== LOGIKA JADWAL =====
 const aktif = (b, t) => b.tanggalMulai <= t && b.tanggalSelesai >= t;
@@ -338,21 +368,26 @@ function bentrok(b, status) {
   return null;
 }
 function slot(r, t, h) {
-  const l = bookings.filter(b => tabrak(b, r, t, h*60, h*60+60));
+  const l = bookings.filter(b => b.ruangan === r && aktif(b, t) && mnt(b.waktuMulai) <= h * 60 && mnt(b.waktuSelesai) >= h * 60);
   const ok = l.find(b => b.status === 'Disetujui'), p = l.find(b => b.status === 'Menunggu');
   return ok ? {s:'busy', b:ok} : p ? {s:'pend', b:p} : {s:'free'};
 }
-function jamTerisi(r, t) {
+function gabung(r, t) {
   const m = [];
   bookings.filter(b => b.status === 'Disetujui' && b.ruangan === r && aktif(b, t)).map(b => [mnt(b.waktuMulai), mnt(b.waktuSelesai)]).sort((a, b) => a[0] - b[0])
     .forEach(x => { const l = m[m.length - 1]; if (l && x[0] <= l[1]) l[1] = Math.max(l[1], x[1]); else m.push([...x]); });
+  return m;
+}
+function jamTerisi(r, t) {
   const f = n => `${pad(Math.floor(n / 60))}.${pad(n % 60)}`;
-  return m.map(x => `${f(x[0])} - ${f(x[1])}`).join(', ');
+  return gabung(r, t).map(x => `${f(x[0])} - ${f(x[1])}`).join(', ');
 }
 function ringkas(r, t) {
-  let busy = 0; const n = J1 - J0;
-  for (let h = J0; h < J1; h++) if (slot(r, t, h).s === 'busy') busy++;
-  return busy >= n ? {busy, n, label:'Penuh', cls:'busy'} : busy ? {busy, n, label:'Sebagian', cls:'part'} : {busy, n, label:'Kosong', cls:'free'};
+  const m = gabung(r, t), n = J1 - J0;
+  const klip = (a, z) => m.reduce((s, x) => s + Math.max(0, Math.min(x[1], z) - Math.max(x[0], a)), 0);
+  const busy = Math.round(klip(J0 * 60, J1 * 60) / 6) / 10;
+  if (klip(J0 * 60, PENUH * 60) >= (PENUH - J0) * 60) return {busy, n, label:'Penuh', cls:'busy'};
+  return busy ? {busy, n, label:'Sebagian', cls:'part'} : {busy, n, label:'Kosong', cls:'free'};
 }
 
 // Warna kegiatan: tiap nama kegiatan mendapat warna sendiri (sebaran hue sudut emas), urut dari pemesanan paling awal
@@ -532,19 +567,19 @@ function renderKal() {
 
   const nowH = new Date().getHours(), isToday = calDate === today, rooms = semuaRuang(calKantor), sum = {Penuh:0, Sebagian:0, Kosong:0};
   let head = '<tr><th class="r">Ruangan</th>', rows = '';
-  for (let h = J0; h < J1; h++) head += `<th class="${isToday && h === nowH ? 'now' : ''}">${pad(h)}:00</th>`;
+  for (let h = J0; h <= J1; h++) head += `<th class="${isToday && h === nowH ? 'now' : ''}">${pad(h)}:00</th>`;
   rooms.forEach(({k, r}) => {
     const s = ringkas(r, calDate); sum[s.label]++;
     let cells = '', h = J0;
-    while (h < J1) {
+    while (h <= J1) {
       const i = slot(r, calDate, h);
       if (i.s === 'free') { cells += `<td class="c free" data-k="${k}" data-r="${esc(r)}" data-h="${h}" title="Kosong, klik untuk memesan"></td>`; h++; continue; }
       let span = 1;
-      while (h + span < J1) { const j = slot(r, calDate, h + span); if (j.s === i.s && j.b.id === i.b.id) span++; else break; }
+      while (h + span <= J1) { const j = slot(r, calDate, h + span); if (j.s === i.s && j.b.id === i.b.id) span++; else break; }
       cells += `<td class="c ${i.s}" colspan="${span}"${i.s === 'busy' ? ` style="background:${warna(i.b.kegiatan)};color:#fff"` : ''} title="${esc(i.b.kegiatan)}, ${esc(i.b.tim)}, ${esc(i.b.waktuMulai)}-${esc(i.b.waktuSelesai)}${i.s === 'pend' ? ' (menunggu persetujuan)' : ''}">${esc(i.b.kegiatan)}</td>`;
       h += span;
     }
-    rows += `<tr><th class="r">${esc(nama(r))}<br><span class="pill ${s.cls}">${s.label}</span> <small>${s.busy}/${s.n} jam, ${calKantor === 'Semua' ? k + ', ' : ''}${esc(kap(r))}</small></th>${cells}</tr>`;
+    rows += `<tr><th class="r"><div class="rl"><div class="rn"><b>${esc(nama(r))}</b><small title="${esc(kap(r))}">${calKantor === 'Semua' ? k + ', ' : ''}Kap. ${esc(kap(r))}</small></div><div class="rs"><span class="pill ${s.cls}">${s.label}</span><small>${s.busy}/${s.n} jam</small></div></div></th>${cells}</tr>`;
   });
   $('grid').innerHTML = head + '</tr>' + rows;
   $('cal-sum').innerHTML = `<b>${fmtTgl(calDate)}</b><br><span class="pill busy">${sum.Penuh} penuh</span> <span class="pill part">${sum.Sebagian} sebagian terisi</span> <span class="pill free">${sum.Kosong} kosong</span>`;
@@ -555,6 +590,29 @@ const agendaHari = t => bookings.filter(b => b.status === 'Disetujui' && aktif(b
 const tglPendek = s => parse(s).toLocaleDateString('id-ID', {day:'numeric', month:'short'});
 const uniq = a => [...new Set(a)];
 const daftar = a => a.length > 1 ? a.map((x, i) => `${i + 1}. ${esc(x)}`).join('<br>') : esc(a[0] || '');
+const BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+let anT = String(new Date().getFullYear()), anB = pad(new Date().getMonth() + 1);
+function renderAnalisis() {
+  const yrs = uniq([anT, String(new Date().getFullYear()), ...bookings.map(b => String(b.tanggalMulai).slice(0, 4)).filter(y => /^\d{4}$/.test(y))]).sort().reverse();
+  $('an-tahun').innerHTML = yrs.map(y => `<option ${y === anT ? 'selected' : ''}>${y}</option>`).join('');
+  $('an-bulan').innerHTML = '<option value="">Semua bulan</option>' + BULAN.map((n, i) => `<option value="${pad(i + 1)}" ${pad(i + 1) === anB ? 'selected' : ''}>${n}</option>`).join('');
+  $('an-label').textContent = `${anB ? BULAN[+anB - 1] : 'Semua bulan'} ${anT}`;
+  const semua = bookings.filter(b => b.tanggalMulai.slice(0, 4) === anT && (!anB || b.tanggalMulai.slice(5, 7) === anB)), ok = semua.filter(b => b.status === 'Disetujui');
+  const hari = b => Math.round((parse(b.tanggalSelesai) - parse(b.tanggalMulai)) / 864e5) + 1;
+  const jam = ok.reduce((x, b) => x + Math.max(0, mnt(b.waktuSelesai) - mnt(b.waktuMulai)) / 60 * hari(b), 0);
+  const hitung = (a, f) => { const m = {}; a.forEach(b => { const k = f(b); m[k] = (m[k] || 0) + 1; }); return Object.entries(m).sort((x, y) => y[1] - x[1]); };
+  const bars = (l, w) => { const mx = Math.max(1, ...l.map(x => x[1])); return l.length ? l.map(([k, v]) => `<div class="br"><span title="${esc(k)}">${esc(k)}</span><div class="bt"><i style="width:${v / mx * 100}%;background:${w}"></i></div><b>${v}</b></div>`).join('') : '<div class="none">Belum ada data</div>'; };
+  const tren = BULAN.map((n, i) => [n.slice(0, 3), bookings.filter(b => b.status === 'Disetujui' && b.tanggalMulai.slice(0, 4) === anT && b.tanggalMulai.slice(5, 7) === pad(i + 1)).length]);
+  const WR = ['#17867b','#2a8c9f','#2c5f9e','#4f6fd0','#6c47a8','#9b59b6','#c0518a','#d9534f','#dd7d3a','#c9971f','#6fa23a','#2f9e63'];
+  const kolom = l => { const mx = Math.max(1, ...l.map(x => x[1])), skr = anT === String(new Date().getFullYear()) ? new Date().getMonth() : -1;
+    return '<div class="cc">' + l.map(([k, v], i) => `<div class="cl${i === skr ? ' now' : ''}" title="${BULAN[i]}: ${v} pemesanan"><div class="cp"><div class="cb" style="height:${Math.max(v ? 6 : 2, Math.round(v / mx * 128))}px;background:${v ? `linear-gradient(180deg,${WR[i]},${WR[i]}b8)` : '#e3ebe9'}">${v ? `<b>${v}</b>` : ''}</div></div><span>${k}</span></div>`).join('') + '</div>'; };
+  const tile = (v, l, c) => `<div class="tl" style="--c:${c}"><b>${v}</b><span>${l}</span></div>`;
+  $('analisis').innerHTML = `<div class="tls">${tile(semua.length, 'Total pengajuan', '#0f5f58')}${tile(ok.length, 'Disetujui', '#2f9e63')}${tile(semua.filter(b => b.status === 'Menunggu').length, 'Menunggu', '#c0791f')}${tile(Math.round(jam * 10) / 10, 'Jam terpakai', '#2c5f9e')}</div>`
+    + `<div class="an"><div class="ab"><h3>Ruangan terpopuler</h3>${bars(hitung(ok, b => nama(b.ruangan)).slice(0, 5), '#0f5f58')}</div>`
+    + `<div class="ab"><h3>Tim pengguna terbanyak</h3>${bars(hitung(ok, b => b.tim).slice(0, 5), '#2c5f9e')}</div>`
+    + `<div class="ab"><h3>Per lokasi</h3>${bars(hitung(ok, b => b.kantor), '#c0791f')}</div>`
+    + `<div class="ab wide"><h3>Tren bulanan ${anT} <small>(pemesanan disetujui per bulan)</small></h3>${kolom(tren)}</div></div>`;
+}
 const jamTitik = t => String(t).replace(':', '.');
 function renderRekap() {
   const t = hariIni();
@@ -570,6 +628,7 @@ function renderRekap() {
   const baris = [...grup.values()];
   $('agenda').innerHTML = baris.length ? baris.map(g => `<tr><td><b>${esc(g.nama)}</b></td><td class="wkt">${uniq(g.w).map(esc).join('<br>')}</td><td>${daftar(uniq(g.r))}</td><td>${uniq(g.k).map(tag).join(' ')}</td></tr>`).join('')
     : '<tr><td colspan="4" class="empty">Belum ada kegiatan terjadwal hari ini.</td></tr>';
+  renderAnalisis();
   renderMinggu();
 }
 function renderMinggu() {
@@ -667,6 +726,9 @@ document.addEventListener('DOMContentLoaded', () => {
   $('e-batal').onclick = () => $('modal-edit').classList.add('hidden');
   $('e-kantor').onchange = () => { isiRuanganE(); cekEdit(); };
   ['e-ruangan','e-tgl1','e-tgl2','e-w1','e-w2','e-kegiatan','e-pemesan'].forEach(i => $(i).oninput = cekEdit);
+  const geser = () => { if (anB) { const t = hariIni(); wkDate = t.slice(0, 7) === `${anT}-${anB}` ? t : `${anT}-${anB}-01`; } renderRekap(); };
+  $('an-tahun').onchange = e => { anT = e.target.value; geser(); };
+  $('an-bulan').onchange = e => { anB = e.target.value; geser(); };
   $('btn-export').onclick = exportExcel;
   $('btn-refresh').onclick = load;
   load();
