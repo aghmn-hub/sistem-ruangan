@@ -611,7 +611,7 @@ function renderAnalisis() {
     + `<div class="an"><div class="ab"><h3>Ruangan terpopuler</h3>${bars(hitung(ok, b => nama(b.ruangan)).slice(0, 5), '#0f5f58')}</div>`
     + `<div class="ab"><h3>Tim pengguna terbanyak</h3>${bars(hitung(ok, b => b.tim).slice(0, 5), '#2c5f9e')}</div>`
     + `<div class="ab"><h3>Per lokasi</h3>${bars(hitung(ok, b => b.kantor), '#c0791f')}</div>`
-    + `<div class="ab wide"><h3>Tren bulanan ${anT} <small>(pemesanan disetujui per bulan)</small></h3>${kolom(tren)}</div></div>`;
+    + `<div class="ab wide"><h3>Tren bulanan ${anT} <small>(penggunaan ruangan per bulan)</small></h3>${kolom(tren)}</div></div>`;
 }
 const jamTitik = t => String(t).replace(':', '.');
 function renderRekap() {
