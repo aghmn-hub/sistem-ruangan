@@ -187,28 +187,88 @@ table.g{min-width:790px}
 .rn b{font-size:12.5px}
 .rn small,.rs small{font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rs{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right}
+/* ===== Tema dashboard (sidebar cyan, kartu lembut) ===== */
+:root{--bg:#eef3fb;--ink:#1d2a4a;--mut:#6b7899;--line:#e4eaf4;--acc:#0f9bb0;--vio:#6c5ce7;--sh:0 12px 30px -18px rgba(40,60,120,.3)}
+body{background:linear-gradient(180deg,#e2f1fb,#eef3fb 340px) #eef3fb;color:var(--ink)}
+.wrap{max-width:1260px;padding:18px 22px 48px 118px}
+nav{position:fixed;left:16px;top:16px;bottom:16px;width:76px;margin:0;display:flex;flex-direction:column;align-items:center;gap:8px;padding:78px 8px 16px;border:0;border-radius:28px;background:linear-gradient(180deg,#4ee2f2,#16b4cc);box-shadow:0 20px 44px -20px rgba(22,180,204,.8);z-index:30}
+nav::before{content:"";position:absolute;top:22px;width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,.28)}
+nav button{position:relative;width:100%;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 2px;border-radius:16px;color:rgba(255,255,255,.88);font-size:10.5px;font-weight:600}
+nav button:hover{background:rgba(255,255,255,.2);color:#fff}
+nav button.on{background:#fff;color:#12a6bd;box-shadow:0 10px 20px -10px rgba(10,90,110,.55)}
+nav .badge{position:absolute;top:4px;right:8px;margin:0;background:#ff5d73}
+.card{border:0;border-radius:22px;box-shadow:var(--sh)}
+.ch{padding:13px 18px}
+.ch.hc-a{background:linear-gradient(135deg,#ffc15c,#f59a2e)}
+.ch.hc-b{background:linear-gradient(135deg,#4ee2f2,#16b4cc)}
+.ch.hc-c{background:linear-gradient(135deg,#6b9bf5,#4472e0)}
+.ch.hc-d{background:linear-gradient(135deg,#9a8cf6,#6c5ce7)}
+.chip{padding:5px 12px;border-radius:99px;background:#fff;box-shadow:var(--sh);font-size:11.5px;font-weight:600}
+.btn{border-radius:11px}
+.btn.pri,.btn.on{background:linear-gradient(135deg,#8070f2,#5b4bdc);border-color:#5b4bdc;box-shadow:0 10px 18px -10px rgba(91,75,220,.8)}
+.btn.pri:hover:not(:disabled),.btn.on:hover:not(:disabled){background:linear-gradient(135deg,#8070f2,#5b4bdc)}
+input:focus,select:focus{border-color:#16b4cc;box-shadow:0 0 0 3px rgba(22,180,204,.18)}
+.stat{display:flex;align-items:center;gap:14px;padding:16px 18px}
+.stat::before{display:none}
+.stat .bub{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;flex:none;color:var(--c);background:color-mix(in srgb,var(--c) 14%,#fff)}
+.stat b{font-size:26px}
+.stat.hl{background:linear-gradient(135deg,#4ee2f2,#16b4cc);color:#fff;box-shadow:0 18px 30px -16px rgba(22,180,204,.85)}
+.stat.hl span{color:rgba(255,255,255,.9)}.stat.hl .bub{color:#fff;background:rgba(255,255,255,.25)}
+.tg th,.ab h3{color:#4a5b85}
+.tg th{background:#f1f5fd;border-bottom-color:var(--line)}
+.tg tbody tr:nth-child(even){background:#f8faff}
+.ab,.tl{border-color:var(--line);border-radius:16px}
+.dn{display:flex;align-items:center;gap:16px}
+.ring{width:104px;height:104px;border-radius:50%;display:grid;place-items:center;flex:none}
+.ring>div{width:72px;height:72px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring b{font:600 20px 'Fraunces',Georgia,serif;line-height:1}.dn ul{list-style:none;margin:0;padding:0;font-size:12px}
+.dn li{display:flex;align-items:center;gap:8px;margin:6px 0}.dn li i{width:10px;height:10px;border-radius:50%}.dn li b{margin-left:auto;padding-left:10px}
+/* kalender ketersediaan */
+table.g{border-spacing:5px 6px;min-width:880px}
+.g tr:first-child th:not(.r){background:#f0f4fb;border-radius:9px;padding:6px 0;color:#4a5b85}
+.g th.now{background:var(--vio)!important;color:#fff!important}
+.g th.r{background:#f6f9ff;border-radius:14px;padding:6px 10px}
+.g td.c{height:48px;border-radius:12px;padding:0 10px;background:#f7faff;border:1px solid #e6edf8;color:#fff;line-height:1.25}
+.g td.free{color:transparent;text-align:center}
+.g td.free:hover{background:#e3f9fc;border-color:#16b4cc;outline:0;color:#16b4cc}
+.g td.free:hover::after{content:"+";font-size:18px;font-weight:700}
+.g td.busy,.g td.pend{border:0}
+.g td b{display:block;font-size:11.5px;overflow:hidden;text-overflow:ellipsis}
+.g td small{display:block;font-size:10px;color:rgba(255,255,255,.86);overflow:hidden;text-overflow:ellipsis}
+.g td.pend{color:var(--pend-i);border:1px dashed var(--pend-i)}.g td.pend small{color:var(--pend-i)}
+.av{width:32px;height:32px;border-radius:11px;display:grid;place-items:center;flex:none;font-size:11px;font-weight:800;color:#0b7f93;background:linear-gradient(135deg,#c9f5fb,#8fe5f1)}
+@media(max-width:860px){
+  .wrap{padding:14px 12px 96px}
+  nav{top:auto;left:10px;right:10px;bottom:10px;width:auto;flex-direction:row;justify-content:space-around;padding:6px;border-radius:22px}
+  nav::before{display:none}nav button{width:auto;flex:1}
+}
+.sumbar{display:flex;justify-content:space-between;align-items:flex-start;gap:14px 20px;flex-wrap:wrap;margin-bottom:16px}
+.sumbar p{margin:0}
+#cal-sum b{display:block;font-size:14px;margin-bottom:10px}
+#cal-sum .pill{margin:0 8px 4px 0}
+#seg{margin-left:auto;flex:none}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
     <div class="brand"><div class="logo" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="3"/><path d="M3 9.5h18M8 3v3M16 3v3M8 14h3M13 14h3M8 17h3"/></svg></div><div><h1>Pemesanan Ruangan</h1><p class="sub">Kantor Diponegoro &amp; Cipto</p></div></div>
-    <div class="bar" style="flex-wrap:nowrap"><small id="sinkron"></small><button class="btn sm hidden" id="btn-refresh">Muat ulang data</button></div>
+    <div class="bar" style="flex-wrap:nowrap"><span class="chip" id="tglhdr"></span><small id="sinkron"></small><button class="btn sm hidden" id="btn-refresh">Muat ulang data</button></div>
   </div>
   <div id="offline" class="note warn hidden" style="margin:0 0 16px">Mode offline: data hanya tersimpan di browser perangkat ini.</div>
 
-  <nav>
-    <button data-tab="pemohon" class="on">Pesan ruangan</button>
-    <button data-tab="bmn">Tim BMN<span id="badge" class="badge hidden">0</span></button>
-    <button data-tab="rekap">Rekap &amp; jadwal</button>
+  <nav aria-label="Menu utama">
+    <button data-tab="pemohon" class="on"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="3"/><path d="M3 9.5h18M8 3v3M16 3v3M12 12.5v5M9.5 15h5"/></svg><span>Pesan</span></button>
+    <button data-tab="bmn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.3 7.8-8 9-4.7-1.2-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg><span>Tim BMN</span><span id="badge" class="badge hidden">0</span></button>
+    <button data-tab="rekap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Rekap</span></button>
   </nav>
 
   <!-- PEMOHON -->
   <section id="v-pemohon" class="view">
     <div class="stats">
-      <div class="card stat"><b id="st-ok">0</b><span>Terfasilitasi</span></div>
-      <div class="card stat"><b id="st-wait">0</b><span>Menunggu persetujuan</span></div>
-      <div class="card stat"><b id="st-today">0</b><span>Kegiatan hari ini</span></div>
+      <div class="card stat"><i class="bub" style="--c:#2f9e63"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><div><b id="st-ok">0</b><span>Terfasilitasi</span></div></div>
+      <div class="card stat hl"><i class="bub" style="--c:#ffffff"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></i><div><b id="st-wait">0</b><span>Menunggu persetujuan</span></div></div>
+      <div class="card stat"><i class="bub" style="--c:#6c5ce7"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="3"/><path d="M3 9.5h18M8 3v3M16 3v3"/></svg></i><div><b id="st-today">0</b><span>Kegiatan hari ini</span></div></div>
     </div>
     <div class="cols">
       <div class="card">
@@ -255,12 +315,11 @@ table.g{min-width:790px}
         </div>
       </div>
       <div class="p">
-        <div class="bar" id="seg">
+        <div class="sumbar"><p id="cal-sum"></p><div class="bar" id="seg">
           <button class="btn sm" data-k="Semua">Semua kantor</button>
           <button class="btn sm" data-k="Diponegoro">Diponegoro</button>
           <button class="btn sm" data-k="Cipto">Cipto</button>
-        </div>
-        <p id="cal-sum" style="margin:0 0 12px"></p>
+        </div></div>
         <div class="gw"><table class="g" id="grid"></table></div>
         <p style="margin:12px 0 0"><span class="pill free">Kosong</span> <span class="pill busy">Terisi</span> <span class="pill pend">Menunggu</span> <small>Klik slot kosong untuk langsung memesan.</small></p>
       </div>
@@ -576,13 +635,13 @@ function renderKal() {
       if (i.s === 'free') { cells += `<td class="c free" data-k="${k}" data-r="${esc(r)}" data-h="${h}" title="Kosong, klik untuk memesan"></td>`; h++; continue; }
       let span = 1;
       while (h + span <= J1) { const j = slot(r, calDate, h + span); if (j.s === i.s && j.b.id === i.b.id) span++; else break; }
-      cells += `<td class="c ${i.s}" colspan="${span}"${i.s === 'busy' ? ` style="background:${warna(i.b.kegiatan)};color:#fff"` : ''} title="${esc(i.b.kegiatan)}, ${esc(i.b.tim)}, ${esc(i.b.waktuMulai)}-${esc(i.b.waktuSelesai)}${i.s === 'pend' ? ' (menunggu persetujuan)' : ''}">${esc(i.b.kegiatan)}</td>`;
+      cells += `<td class="c ${i.s}" colspan="${span}"${i.s === 'busy' ? ` style="background:${warna(i.b.kegiatan)};color:#fff"` : ''} title="${esc(i.b.kegiatan)}, ${esc(i.b.tim)}, ${esc(i.b.waktuMulai)}-${esc(i.b.waktuSelesai)}${i.s === 'pend' ? ' (menunggu persetujuan)' : ''}"><b>${esc(i.b.kegiatan)}</b><small>${i.s === 'pend' ? 'Menunggu ' : ''}${jamTitik(i.b.waktuMulai)}-${jamTitik(i.b.waktuSelesai)}</small></td>`;
       h += span;
     }
-    rows += `<tr><th class="r"><div class="rl"><div class="rn"><b>${esc(nama(r))}</b><small title="${esc(kap(r))}">${calKantor === 'Semua' ? k + ', ' : ''}Kap. ${esc(kap(r))}</small></div><div class="rs"><span class="pill ${s.cls}">${s.label}</span><small>${s.busy}/${s.n} jam</small></div></div></th>${cells}</tr>`;
+    rows += `<tr><th class="r"><div class="rl"><span class="av">${esc(nama(r).split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase())}</span><div class="rn"><b>${esc(nama(r))}</b><small title="${esc(kap(r))}">${calKantor === 'Semua' ? k + ', ' : ''}Kap. ${esc(kap(r))}</small></div><div class="rs"><span class="pill ${s.cls}">${s.label}</span><small>${s.busy}/${s.n} jam</small></div></div></th>${cells}</tr>`;
   });
   $('grid').innerHTML = head + '</tr>' + rows;
-  $('cal-sum').innerHTML = `<b>${fmtTgl(calDate)}</b><br><span class="pill busy">${sum.Penuh} penuh</span> <span class="pill part">${sum.Sebagian} sebagian terisi</span> <span class="pill free">${sum.Kosong} kosong</span>`;
+  $('cal-sum').innerHTML = `<b>${fmtTgl(calDate)}</b><span class="pill busy">${sum.Penuh} penuh</span> <span class="pill part">${sum.Sebagian} sebagian terisi</span> <span class="pill free">${sum.Kosong} kosong</span>`;
 
 }
 
@@ -606,12 +665,15 @@ function renderAnalisis() {
   const WR = ['#17867b','#2a8c9f','#2c5f9e','#4f6fd0','#6c47a8','#9b59b6','#c0518a','#d9534f','#dd7d3a','#c9971f','#6fa23a','#2f9e63'];
   const kolom = l => { const mx = Math.max(1, ...l.map(x => x[1])), skr = anT === String(new Date().getFullYear()) ? new Date().getMonth() : -1;
     return '<div class="cc">' + l.map(([k, v], i) => `<div class="cl${i === skr ? ' now' : ''}" title="${BULAN[i]}: ${v} pemesanan"><div class="cp"><div class="cb" style="height:${Math.max(v ? 6 : 2, Math.round(v / mx * 128))}px;background:${v ? `linear-gradient(180deg,${WR[i]},${WR[i]}b8)` : '#e3ebe9'}">${v ? `<b>${v}</b>` : ''}</div></div><span>${k}</span></div>`).join('') + '</div>'; };
+  const donut = l => { const tot = l.reduce((x, y) => x + y[1], 0); if (!tot) return '<div class="none">Belum ada data</div>'; const C = ['#2fd0e3', '#6c5ce7', '#f2b84b']; let a = 0;
+    const seg = l.map(([k, v], i) => `${C[i % 3]} ${a}% ${a += v / tot * 100}%`).join(',');
+    return `<div class="dn"><div class="ring" style="background:conic-gradient(${seg})"><div><b>${tot}</b><small>pemesanan</small></div></div><ul>${l.map(([k, v], i) => `<li><i style="background:${C[i % 3]}"></i>${esc(k)} <b>${v}</b></li>`).join('')}</ul></div>`; };
   const tile = (v, l, c) => `<div class="tl" style="--c:${c}"><b>${v}</b><span>${l}</span></div>`;
   $('analisis').innerHTML = `<div class="tls">${tile(semua.length, 'Total pengajuan', '#0f5f58')}${tile(ok.length, 'Disetujui', '#2f9e63')}${tile(semua.filter(b => b.status === 'Menunggu').length, 'Menunggu', '#c0791f')}${tile(Math.round(jam * 10) / 10, 'Jam terpakai', '#2c5f9e')}</div>`
     + `<div class="an"><div class="ab"><h3>Ruangan terpopuler</h3>${bars(hitung(ok, b => nama(b.ruangan)).slice(0, 5), '#0f5f58')}</div>`
     + `<div class="ab"><h3>Tim pengguna terbanyak</h3>${bars(hitung(ok, b => b.tim).slice(0, 5), '#2c5f9e')}</div>`
-    + `<div class="ab"><h3>Per lokasi</h3>${bars(hitung(ok, b => b.kantor), '#c0791f')}</div>`
-    + `<div class="ab wide"><h3>Tren bulanan ${anT} <small>(penggunaan ruangan per bulan)</small></h3>${kolom(tren)}</div></div>`;
+    + `<div class="ab"><h3>Per lokasi</h3>${donut(hitung(ok, b => b.kantor))}</div>`
+    + `<div class="ab wide"><h3>Tren bulanan ${anT} <small>(pemesanan disetujui per bulan)</small></h3>${kolom(tren)}</div></div>`;
 }
 const jamTitik = t => String(t).replace(':', '.');
 function renderRekap() {
@@ -683,7 +745,7 @@ const gantiTgl = t => { if (t) { calDate = t; renderKal(); } };
 
 document.addEventListener('DOMContentLoaded', () => {
   $('input-tim').innerHTML = TIM.map(t => `<option>${esc(t)}</option>`).join('');
-  resetTanggal(); $('cal-date').value = calDate; isiRuangan();
+  resetTanggal(); $('cal-date').value = calDate; isiRuangan(); $('tglhdr').textContent = fmtTgl(hariIni());
 
   document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
     if (b.dataset.tab !== 'bmn') return tab(b.dataset.tab);
